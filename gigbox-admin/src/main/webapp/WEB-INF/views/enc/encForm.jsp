@@ -14,16 +14,16 @@
     <title>관리자 계정 암호화 페이지</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/resources/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- MetisMenu CSS -->
-    <link href="../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+    <link href="/resources/vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+    <link href="/resources/dist/css/sb-admin-2.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="/resources/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -44,21 +44,21 @@
                         <h3 class="panel-title">관리자 계정 암호화</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form">
+                        <form role="form" method="post">
                             <fieldset>
                             	<div class="alert alert-danger">
-                            		본 암호화 페이지는 각 관리자 계정 당 1회 암호화 합니다. <br>
+                            		본 암호화 페이지는 각 관리자 계정 당 1회 암호화 합니다. 
                             		암호화 하기 전의 아이디와 암호를 입력해 주세요.
                             	</div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="ID" name="id" type="text" autofocus>
+                                    <input class="form-control" placeholder="ID" name="adminId" type="text" autofocus>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                    <input class="form-control" placeholder="Password" name="adminPw" type="password" value="">
                                 </div>
                                 
                                 <!-- Change this to a button or input when using this as a form -->
-                                <button class="btn btn-lg btn-success btn-block">암호화 실행</button>
+                                <button type="submit" class="btn btn-lg btn-success btn-block">암호화 실행</button>
                             </fieldset>
                         </form>
                     </div>
@@ -68,16 +68,16 @@
     </div>
 
     <!-- jQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="/resources/vendor/jquery/jquery.min.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/resources/vendor/bootstrap/js/bootstrap.min.js"></script>
 
     <!-- Metis Menu Plugin JavaScript -->
-    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="/resources/vendor/metisMenu/metisMenu.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="../dist/js/sb-admin-2.js"></script>
+    <script src="/resources/dist/js/sb-admin-2.js"></script>
 
 </body>
 
