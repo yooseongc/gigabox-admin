@@ -1,0 +1,61 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+		<!-- aside -->
+        <aside id="admin_main_aside">
+            <nav id="admin_main_aside_nav" class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        
+                        <li>
+                            <a href="index.html"><i class="fa fa-home fa-fw"></i> HOME</a>
+                        </li>
+                        <li>
+                            <a href="movie.html"><i class="fa fa-video-camera fa-fw"></i> 영화 관리</a>
+                        </li>
+                        <li>
+                            <a href="cinema.html"><i class="fa fa-building-o fa-fw"></i> 영화관 관리</a>
+                        </li>
+                        <li>
+                            <a href="reservation.html"><i class="fa fa-calendar fa-fw"></i> 예매 관리</a>
+                        </li>
+                        <li>
+                            <a href="user.html"><i class="fa fa-user fa-fw"></i> 회원 관리</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-question-circle fa-fw"></i> 고객센터 관리<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="notice.html">공지사항 관리</a>
+                                </li>
+                                <li>
+                                    <a href="faq.html">자주 묻는 질문 관리</a>
+                                </li>
+                                <li>
+                                    <a href="qna.html">문의 게시판 관리</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> 통계<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="memberstat.html">회원 통계</a>
+                                </li>
+                                <li>
+                                    <a href="reservationstat.html">예매 통계</a>
+                                </li>
+                                <li>
+                                    <a href="salesstat.html">매출 통계</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </nav>
+            <!-- /.navbar-static-side -->
+        </aside>
+        <!-- aside -->

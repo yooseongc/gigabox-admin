@@ -2,13 +2,13 @@
 	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
-	<mapper namespace="com.gigabox.mapper.AdminMapper">
+<mapper namespace="com.gigabox.mapper.AdminMapper">
 	
-		<resultMap type="admin" id="adminResultMap">
-			<result property="adminNumber" column="ADMIN_NUMBER" />
-			<result property="adminId" column="ADMIN_ID" />
-			<result property="adminPw" column="ADMIN_PW" />
-		</resultMap>
+	<resultMap type="admin" id="adminResultMap">
+		<result property="adminNumber" column="ADMIN_NUMBER" />
+		<result property="adminId" column="ADMIN_ID" />
+		<result property="adminPw" column="ADMIN_PW" />
+	</resultMap>
 	
 	<select id="idCheck" parameterType="admin" resultType="int">
 		SELECT COUNT(*) 
@@ -28,5 +28,10 @@
 		WHERE ADMIN_ID = #{adminId} 
 	</update>
 		
+	<select id="login" resultType="admin" resultMap="adminResultMap">
+		SELECT ADMIN_ID, ADMIN_PW 
+		FROM TBL_ADMIN 
+		WHERE ADMIN_ID = #{adminId}  
+	</select>
 	
-	</mapper>
+</mapper>

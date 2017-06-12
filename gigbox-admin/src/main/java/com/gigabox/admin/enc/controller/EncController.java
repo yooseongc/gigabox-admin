@@ -16,7 +16,8 @@ import com.gigabox.admin.enc.service.EncService;
 import com.gigabox.admin.enc.utils.BCrypt;
 import com.gigabox.admin.enc.utils.SHA256;
 
-@Controller("/admin/enc")
+@Controller
+@RequestMapping(value="/admin/enc")
 public class EncController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(EncController.class);
@@ -24,14 +25,14 @@ public class EncController {
 	@Inject
 	private EncService encService;
 	
-	@RequestMapping(value="/admin/enc/encForm", method=RequestMethod.GET)
+	@RequestMapping(value="/encForm", method=RequestMethod.GET)
 	public String encFormGET() {
 		logger.info("ENCFORM PAGE LOADING...");
 		return "/enc/encForm";
 	}
 	
 	@Transactional
-	@RequestMapping(value="/admin/enc/encForm", method=RequestMethod.POST)
+	@RequestMapping(value="/encForm", method=RequestMethod.POST)
 	public String encFormPOST(Model model, AdminVO adminVO) {
 		logger.info("ENCFORM PAGE PROCESSING...");
 		logger.info("SUBMITTED DATA: " + adminVO.toString());

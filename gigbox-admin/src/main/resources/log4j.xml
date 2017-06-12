@@ -11,10 +11,16 @@
 	</appender>
 	
 	<!-- Application Loggers -->
-	<logger name="com.gigabox.admin.**">
+	<logger name="com.gigabox.admin.controller">
 		<level value="info" />
 	</logger>
 	<logger name="com.gigabox.admin.enc.controller">
+		<level value="info" />
+	</logger>
+	<logger name="com.gigabox.admin.admin.controller">
+		<level value="info" />
+	</logger>
+	<logger name="com.gigabox.admin.admin.interceptor">
 		<level value="info" />
 	</logger>
 	
