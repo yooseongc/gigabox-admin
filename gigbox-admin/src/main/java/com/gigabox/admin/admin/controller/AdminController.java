@@ -1,9 +1,11 @@
 package com.gigabox.admin.admin.controller;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -82,6 +84,14 @@ public class AdminController {
 					resultMap.put("pwCheckResult", 1);
 					resultMap.put("message", "LOGIN-SUCCESS");
 					
+					// 자동 로그인 처리
+					if (loginDTO.isUseCookie()) {
+						int amount = 60 * 60 * 24 * 7; // 1주일
+						Date sessionLimit = new Date(System.currentTimeMillis() + 1000 * amount);
+						
+						adminService.autoLogin(loginDTO.getAdminId(), session.getId(), sessionLimit);
+					}
+					
 					return new ResponseEntity<Map<String, Object>> (resultMap, HttpStatus.OK);
 				} else {
 					// 비밀번호 불일치
@@ -111,7 +121,8 @@ public class AdminController {
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
 	public String logout(HttpSession session) {
-		logger.info("LOGOUT PROCESS - Remove Session");
+		logger.info("LOGOUT PROCESS - Remove Session and Cookie");
+		adminService.autoLogin(((AdminVO) session.getAttribute("login")).getAdminId(), "none", new Date(System.currentTimeMillis()));
 		session.removeAttribute("login");
 		return "redirect:/admin/login";
 	}

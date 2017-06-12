@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript">
-	self.location = "/admin.do";
+	self.location = "/admin";
 </script>
 </head>
 <body>

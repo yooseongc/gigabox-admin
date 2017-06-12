@@ -1,5 +1,7 @@
 package com.gigabox.admin.admin.service;
 
+import java.sql.Date;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
@@ -22,6 +24,16 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public int idCheck(AdminVO adminVO) {
 		return adminDAO.idCheck(adminVO);
+	}
+
+	@Override
+	public void autoLogin(String adminId, String sessionId, Date next) {
+		adminDAO.autoLogin(adminId, sessionId, next);
+	}
+
+	@Override
+	public AdminVO checkAdminWithSessionKey(String value) {
+		return adminDAO.checkAdminWithSessionKey(value);
 	}
 
 }

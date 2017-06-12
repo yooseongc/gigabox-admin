@@ -12,8 +12,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">GigaBox 관리자 페이지</a>
+                <a class="navbar-brand" href="/admin"><img src="/resources/images/logo_giga.png" style="display: inline;"></a>
+                
             </div>
+            <h2 class="navbar-text navbar-collapse text-bold">관리자 페이지</h2>
             
             <ul class="nav navbar-top-links navbar-right">
             	<li>

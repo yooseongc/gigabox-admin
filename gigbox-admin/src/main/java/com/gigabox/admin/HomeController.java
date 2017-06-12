@@ -15,7 +15,7 @@ public class HomeController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
-	@RequestMapping(value = "/admin/index", method = RequestMethod.GET)
+	@RequestMapping(value={"/admin/index","/admin"}, method=RequestMethod.GET)
 	public String home() {
 		logger.info("INDEX PAGE LOADING...");
 		

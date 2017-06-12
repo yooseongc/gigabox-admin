@@ -34,4 +34,18 @@
 		WHERE ADMIN_ID = #{adminId}  
 	</select>
 	
+	<update id="autoLogin">
+		UPDATE TBL_ADMIN 
+		SET SESSIONKEY = #{sessionId}, SESSIONLIMIT = #{next} 
+		WHERE ADMIN_ID = #{adminId} 
+	</update>
+	
+	<select id="checkAdminWithSessionKey" resultType="admin" resultMap="adminResultMap">
+		<![CDATA[
+		SELECT * 
+		FROM TBL_ADMIN 
+		WHERE SESSIONKEY = #{value} AND SESSIONLIMIT > SYSDATE 
+		]]>
+	</select>
+	
 </mapper>

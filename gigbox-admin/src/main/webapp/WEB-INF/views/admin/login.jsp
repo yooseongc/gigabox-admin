@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
    <!DOCTYPE html>
 <html lang="ko">
 
@@ -58,7 +58,13 @@
                                 </div>
                                 <div class="checkbox">
                                     <label>
+                                    	<c:if test="${!empty cookie.loginCookie}">
+                                        <input name="useCookie" type="checkbox" checked="checked">자동 로그인
+                                        </c:if>
+                                    	<c:if test="${empty cookie.loginCookie}">
                                         <input name="useCookie" type="checkbox">자동 로그인
+                                        </c:if>
+                                        
                                     </label>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->

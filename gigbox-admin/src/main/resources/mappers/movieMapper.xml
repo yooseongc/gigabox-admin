@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.gigabox.mapper.MovieMapper">
+	
+	<resultMap type="movie" id="movieResultMap">
+		<result property="movieNumber" column="MOVIE_NUMBER" />
+		<result property="movieType" column="MOVIE_TYPE" />
+		<result property="movieRating" column="MOVIE_RATING" />
+		<result property="movieReleasedate" column="MOVIE_RELEASEDATE" />
+		<result property="movieDirector" column="MOVIE_DIRECTOR" />
+		<result property="movieCast" column="MOVIE_CAST" />
+		<result property="movieScreentime" column="MOVIE_SCREENTIME" />
+		<result property="movieGenre" column="MOVIE_GENRE" />
+		<result property="movieStoryline" column="MOVIE_STORYLINE" />
+		<result property="movieEngname" column="MOVIE_ENGNAME" />
+		<result property="moviePost" column="MOVIE_POSTER" />
+		<result property="movieSteelcut" column="MOVIE_STEELCUT" />
+		<result property="movieTrailer" column="MOVIE_TRAILER" />
+	</resultMap>
+	
+	
+	
+</mapper>

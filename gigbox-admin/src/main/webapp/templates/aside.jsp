@@ -8,31 +8,31 @@
                     <ul class="nav" id="side-menu">
                         
                         <li>
-                            <a href="index.html"><i class="fa fa-home fa-fw"></i> HOME</a>
+                            <a href="/admin/index"><i class="fa fa-home fa-fw"></i> HOME</a>
                         </li>
                         <li>
-                            <a href="movie.html"><i class="fa fa-video-camera fa-fw"></i> 영화 관리</a>
+                            <a href="/admin/movie/movieMain"><i class="fa fa-video-camera fa-fw"></i> 영화 관리</a>
                         </li>
                         <li>
-                            <a href="cinema.html"><i class="fa fa-building-o fa-fw"></i> 영화관 관리</a>
+                            <a href="/admin/cinema/cinemaMain"><i class="fa fa-building-o fa-fw"></i> 영화관 관리</a>
                         </li>
                         <li>
-                            <a href="reservation.html"><i class="fa fa-calendar fa-fw"></i> 예매 관리</a>
+                            <a href="/admin/reservation/reservationMain"><i class="fa fa-calendar fa-fw"></i> 예매 관리</a>
                         </li>
                         <li>
-                            <a href="user.html"><i class="fa fa-user fa-fw"></i> 회원 관리</a>
+                            <a href="/admin/user/userMain"><i class="fa fa-user fa-fw"></i> 회원 관리</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-question-circle fa-fw"></i> 고객센터 관리<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="notice.html">공지사항 관리</a>
+                                    <a href="/admin/notice/noticeMain">공지사항 관리</a>
                                 </li>
                                 <li>
-                                    <a href="faq.html">자주 묻는 질문 관리</a>
+                                    <a href="/admin/faq/faqMain">자주 묻는 질문 관리</a>
                                 </li>
                                 <li>
-                                    <a href="qna.html">문의 게시판 관리</a>
+                                    <a href="/admin/qna/qnaMain">문의 게시판 관리</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

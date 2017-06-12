@@ -1,5 +1,6 @@
 package com.gigabox.admin.admin.interceptor;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,6 +45,14 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		if (adminVO != null) {
 			logger.info("NEW LOGIN SESSION CREATED, " + ((AdminVO) adminVO).toString());
 			session.setAttribute(LOGIN, adminVO);
+			
+			if (request.getParameter("useCookie") != null) {
+				logger.info("AUTO LOGIN ALLOWED - CREATE COOKIE");
+				Cookie loginCookie = new Cookie("loginCookie", session.getId());
+				loginCookie.setPath("/");
+				loginCookie.setMaxAge(60 * 60 * 24 * 7);	// 1주일
+				response.addCookie(loginCookie);
+			}
 			
 			// index.jsp로 돌려보냄.
 			response.sendRedirect("/admin/index");
