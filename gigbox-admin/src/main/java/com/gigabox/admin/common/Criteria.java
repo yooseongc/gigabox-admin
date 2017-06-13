@@ -2,8 +2,8 @@ package com.gigabox.admin.common;
 
 public class Criteria {
 	
-	private int page;
-	private int perPageNum;
+	protected int page;
+	protected int perPageNum;
 	
 	public Criteria() {
 		this.page = 1;

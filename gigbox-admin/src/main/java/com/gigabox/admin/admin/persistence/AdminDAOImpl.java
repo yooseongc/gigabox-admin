@@ -18,7 +18,7 @@ public class AdminDAOImpl implements AdminDAO {
 	@Inject
 	private SqlSession sqlSession;
 	
-	private static final String namespace = "com.gigabox.mapper.AdminMapper";
+	private static final String namespace = "com.gigabox.admin.mapper.AdminMapper";
 	
 	@Override
 	public AdminVO login(LoginDTO loginDTO) {

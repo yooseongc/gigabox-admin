@@ -2,7 +2,7 @@
 	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
-<mapper namespace="com.gigabox.mapper.MovieMapper">
+<mapper namespace="com.gigabox.admin.mapper.MovieMapper">
 	
 	<resultMap type="movie" id="movieResultMap">
 		<result property="movieNumber" column="MOVIE_NUMBER" />
@@ -16,13 +16,13 @@
 		<result property="movieGenre" column="MOVIE_GENRE" />
 		<result property="movieStoryline" column="MOVIE_STORYLINE" />
 		<result property="movieEngname" column="MOVIE_ENGNAME" />
-		<result property="moviePost" column="MOVIE_POSTER" />
+		<result property="moviePoster" column="MOVIE_POSTER" />
 		<result property="movieSteelcut" column="MOVIE_STEELCUT" />
 		<result property="movieTrailer" column="MOVIE_TRAILER" />
 		
 	</resultMap>
 	
-	<select id="movieList" parameterType="movie" resultType="movie" resultMap="movieResultMap">
+	<select id="movieList" resultType="movie" resultMap="movieResultMap">
 	
 		SELECT * 
 		FROM 
@@ -36,14 +36,14 @@
 			) LIST 
 		) 
 		<where>
-			<if test="startRow != null and startRow != ''">
-				RNUM BETWEEN #{startRow} AND #{endRow} 
+			<if test="startPage != null and startPage != ''">
+				RNUM BETWEEN #{startPage} AND #{endPage} 
 			</if>
 		</where>
 	
 	</select>
 	
-	<select id="movieListCount" parameterType="movie" resultType="int">
+	<select id="movieListCount" resultType="int">
 		SELECT NVL(COUNT(1), 0) 
 		FROM 
 		(
@@ -55,6 +55,11 @@
 				ORDER BY MOVIE_RELEASEDATE DESC, MOVIE_TITLE ASC 
 			) LIST 
 		) 
+		<where>
+			<if test="startPage != null and startPage != ''">
+				RNUM BETWEEN #{startPage} AND #{endPage} 
+			</if>
+		</where>
 		
 	</select>
 	

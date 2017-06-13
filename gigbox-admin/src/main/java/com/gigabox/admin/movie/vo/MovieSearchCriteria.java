@@ -1,0 +1,124 @@
+package com.gigabox.admin.movie.vo;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.gigabox.admin.common.Criteria;
+
+public class MovieSearchCriteria extends Criteria {
+	
+	private String searchType;
+	private String searchKeyword;
+	private String genre;
+	private String rating;
+	private String startYear;
+	private String endYear;
+	
+	public void checkYear() {
+		if (startYear == null || "".equals(startYear)) {
+			startYear = "1700";
+		}
+		if (endYear == null || "".equals(endYear)) {
+			endYear = "2099";
+		}
+		if (Integer.parseInt(startYear) > Integer.parseInt(endYear)) {
+			String temp = startYear;
+			startYear = endYear;
+			endYear = temp;
+		}
+	}
+	
+	public List<String> getGenreArray() {
+		if (genre == null || "".equals(genre.trim())) {
+			return null;
+		}
+		String genreTrim = genre.replaceAll(" ", "");
+		ArrayList<String> genreList = new ArrayList<>();
+		if (!genreTrim.contains(",")) {
+			genreList.add(genreTrim);
+			return genreList;
+		} else {
+			String[] genreStringArray = genreTrim.split(",");
+			for (String genreSingleString : genreStringArray) {
+				genreList.add(genreSingleString);
+			}
+			return genreList;
+		}
+	}
+	
+	
+	public String makeQuery() {
+		UriComponents uriComponents = 
+			UriComponentsBuilder.newInstance()
+				.queryParam("page", this.page)
+				.queryParam("perPageNum", this.perPageNum)
+				.queryParam("searchType", encoding(searchType))
+				.queryParam("searchKeyword", encoding(searchKeyword))
+				.queryParam("genre", encoding(genre))
+				.build();
+		return uriComponents.toString();
+	}
+	
+	private String encoding(String keyword) {
+		if (keyword == null || keyword.trim().length() == 0) {
+			return "";
+		}
+		try {
+			return URLEncoder.encode(keyword, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	public String getSearchType() {
+		return searchType;
+	}
+	public void setSearchType(String searchType) {
+		this.searchType = searchType;
+	}
+	public String getSearchKeyword() {
+		return searchKeyword;
+	}
+	public void setSearchKeyword(String searchKeyword) {
+		this.searchKeyword = searchKeyword;
+	}
+	public String getGenre() {
+		return genre;
+	}
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+	public String getRating() {
+		return rating;
+	}
+	public void setRating(String rating) {
+		this.rating = rating;
+	}
+	public String getStartYear() {
+		return startYear;
+	}
+	public void setStartYear(String startYear) {
+		this.startYear = startYear;
+	}
+	public String getEndYear() {
+		return endYear;
+	}
+	public void setEndYear(String endYear) {
+		this.endYear = endYear;
+	}
+	
+	@Override
+	public String toString() {
+		return "MovieSearchCriteria [searchType=" + searchType + ", searchKeyword=" + searchKeyword + ", genre=" + genre
+				+ ", rating=" + rating + ", startYear=" + startYear + ", endYear=" + endYear + "]";
+	}
+	
+	
+	
+}

@@ -14,7 +14,7 @@ public class EncDAOImpl implements EncDAO {
 	private SqlSession sqlSession;
 	
 	private static final String namespace = 
-			"com.gigabox.mapper.AdminMapper";
+			"com.gigabox.admin.mapper.AdminMapper";
 	
 	@Override
 	public int idCheck(AdminVO adminVO) {
