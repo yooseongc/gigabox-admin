@@ -41,8 +41,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 				if (adminVO != null) {
 					logger.info("LOGIN INFO WAS FOUND BY LOGIN COOKIE= " + adminVO.toString());
 					session.setAttribute("login", adminVO);
-					response.sendRedirect("/admin/index");
-					return false;
+					return true;
 				} 
 				
 			}

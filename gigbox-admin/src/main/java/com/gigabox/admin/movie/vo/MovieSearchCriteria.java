@@ -33,33 +33,17 @@ public class MovieSearchCriteria extends Criteria {
 		}
 	}
 	
-	public List<String> getGenreArray() {
-		if (genre == null || "".equals(genre.trim())) {
-			return null;
-		}
-		String genreTrim = genre.replaceAll(" ", "");
-		ArrayList<String> genreList = new ArrayList<>();
-		if (!genreTrim.contains(",")) {
-			genreList.add(genreTrim);
-			return genreList;
-		} else {
-			String[] genreStringArray = genreTrim.split(",");
-			for (String genreSingleString : genreStringArray) {
-				genreList.add(genreSingleString);
-			}
-			return genreList;
-		}
-	}
-	
-	
 	public String makeQuery() {
 		UriComponents uriComponents = 
 			UriComponentsBuilder.newInstance()
 				.queryParam("page", this.page)
 				.queryParam("perPageNum", this.perPageNum)
-				.queryParam("searchType", encoding(searchType))
+				.queryParam("searchType", searchType)
 				.queryParam("searchKeyword", encoding(searchKeyword))
 				.queryParam("genre", encoding(genre))
+				.queryParam("rating", encoding(rating))
+				.queryParam("startYear", startYear)
+				.queryParam("endYear", endYear)
 				.build();
 		return uriComponents.toString();
 	}
@@ -115,7 +99,7 @@ public class MovieSearchCriteria extends Criteria {
 	
 	@Override
 	public String toString() {
-		return "MovieSearchCriteria [searchType=" + searchType + ", searchKeyword=" + searchKeyword + ", genre=" + genre
+		return super.toString() + " MovieSearchCriteria [searchType=" + searchType + ", searchKeyword=" + searchKeyword + ", genre=" + genre
 				+ ", rating=" + rating + ", startYear=" + startYear + ", endYear=" + endYear + "]";
 	}
 	
