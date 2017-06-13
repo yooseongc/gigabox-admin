@@ -6,6 +6,7 @@
 	
 	<resultMap type="movie" id="movieResultMap">
 		<result property="movieNumber" column="MOVIE_NUMBER" />
+		<result property="movieTitle" column="MOVIE_TITLE" />
 		<result property="movieType" column="MOVIE_TYPE" />
 		<result property="movieRating" column="MOVIE_RATING" />
 		<result property="movieReleasedate" column="MOVIE_RELEASEDATE" />
@@ -18,8 +19,81 @@
 		<result property="moviePost" column="MOVIE_POSTER" />
 		<result property="movieSteelcut" column="MOVIE_STEELCUT" />
 		<result property="movieTrailer" column="MOVIE_TRAILER" />
+		
 	</resultMap>
 	
+	<select id="movieList" parameterType="movie" resultType="movie" resultMap="movieResultMap">
 	
+		SELECT * 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+				SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_RATING, MOVIE_RELEASEDATE, MOVIE_GENRE  
+				FROM TBL_MOVIE 
+				ORDER BY MOVIE_RELEASEDATE DESC, MOVIE_TITLE ASC  
+			) LIST 
+		) 
+		<where>
+			<if test="startRow != null and startRow != ''">
+				RNUM BETWEEN #{startRow} AND #{endRow} 
+			</if>
+		</where>
+	
+	</select>
+	
+	<select id="movieListCount" parameterType="movie" resultType="int">
+		SELECT NVL(COUNT(1), 0) 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+				SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_RATING, MOVIE_RELEASEDATE, MOVIE_GENRE  
+				FROM TBL_MOVIE 
+				ORDER BY MOVIE_RELEASEDATE DESC, MOVIE_TITLE ASC 
+			) LIST 
+		) 
+		
+	</select>
+	
+	<select id="movieDetail" parameterType="int" resultType="movie" resultMap="movieResultMap">
+		SELECT * 
+		FROM TBL_MOVIE 
+		WHERE MOVIE_NUMBER = #{movieNumber} 
+	</select>
+	
+	<insert id="movieInsert" parameterType="movie">
+		<selectKey keyProperty="movieNumber" resultType="int" order="BEFORE">
+			SELECT SEQ_MOVIE.NEXTVAL FROM DUAL 
+		</selectKey>
+		INSERT INTO TBL_MOVIE (
+		  MOVIE_NUMBER, MOVIE_TITLE, MOVIE_RATING, MOVIE_RELEASEDATE, 
+		  MOVIE_DIRECTOR, MOVIE_CAST, MOVIE_SCREENTIME, MOVIE_GENRE, 
+		  MOVIE_STORYLINE, MOVIE_ENGNAME, MOVIE_POSTER, MOVIE_STEELCUT, 
+		  MOVIE_TRAILER ) 
+		VALUES (
+		  #{movieNumber}, #{movieTitle}, #{movieRating}, #{movieReleasedate},
+		  #{movieDirector}, #{movieCast}, #{movieScreentime}, #{movieGenre},
+		  #{movieStoryline}, #{movieEngname}, #{moviePoster}, #{movieSteelcut},
+		  #{movieTrailer} 
+		  ) 
+	</insert>
+	
+	<update id="movieUpdate" parameterType="movie">
+		UPDATE TBL_MOVIE 
+		SET 
+		  MOVIE_TITLE = #{movieTitle}, MOVIE_RATING = #{movieRating}, MOVIE_RELEASEDATE = #{movieReleasedate}, 
+		  MOVIE_DIRECTOR = #{movieDirector}, MOVIE_CAST = #{movieCast}, MOVIE_SCREENTIME = #{movieScreentime}, 
+		  MOVIE_GENRE = #{movieGenre}, MOVIE_STORYLINE = #{movieStoryline}, MOVIE_ENGNAME = #{movieEngname}, 
+		  MOVIE_POSTER = #{moviePoster}, MOVIE_STEELCUT = #{movieSteelcut}, MOVIE_TRAILER = #{movieTrailer} 
+		WHERE MOVIE_NUMBER = #{movieNumber} 
+	</update>
+	
+	<delete id="movieDelete" parameterType="movie">
+		DELETE FROM TBL_MOVIE 
+		WHERE MOVIE_NUMBER = #{movieNumber} 
+	</delete>
 	
 </mapper>

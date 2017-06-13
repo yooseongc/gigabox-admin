@@ -11,6 +11,9 @@
 	</appender>
 	
 	<!-- Application Loggers -->
+	<logger name="com.gigabox.admin">
+		<level value="info" />
+	</logger>
 	<logger name="com.gigabox.admin.controller">
 		<level value="info" />
 	</logger>
@@ -21,6 +24,9 @@
 		<level value="info" />
 	</logger>
 	<logger name="com.gigabox.admin.admin.interceptor">
+		<level value="info" />
+	</logger>
+	<logger name="com.gigabox.admin.movie.controller">
 		<level value="info" />
 	</logger>
 	
@@ -39,6 +45,14 @@
 
 	<logger name="org.springframework.web">
 		<level value="info" />
+	</logger>
+
+	<!-- Database Logger -->
+	<logger name="java.sqlonly" additivity="false">
+		<level value="DEBUG"/>
+	</logger>
+	<logger name="java.resultsettable" additivity="false">
+		<level value="DEBUG"/>
 	</logger>
 
 	<!-- Root Logger -->
