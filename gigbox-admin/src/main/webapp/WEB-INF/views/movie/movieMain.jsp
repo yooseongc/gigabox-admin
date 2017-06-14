@@ -217,7 +217,7 @@ tr:hover td {
                             <i class="fa fa-video-camera fa-fw"></i> 영화 목록
                             <div class="pull-right">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-success btn-sm">영화 추가</button>
+                                    <button type="button" class="btn btn-success btn-sm" id="movieInsertModalButton">영화 추가</button>
                                 </div>
                             </div>
                         </div>
@@ -266,34 +266,110 @@ tr:hover td {
     </div>
     <!-- /#admin_main_wrapper -->
 
+	
+	<!-- 영화 추가용 모달 -->
 	<!-- Modal -->
-    <div class="modal fade" id="movieDetailModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="movieInsertModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3 class="modal-title" id="modalLabel"><span id="detailMovieTitle" style="font-weight: bold;"></span></h3>
+                    <h4 class="modal-title">영화 추가</h4>
                 </div>
                 <div class="modal-body">
                 	<div class="panel panel-default">
                         <div class="panel-body">
-                            <div class="list-group">
-                                <div class="list-group-item hide" data-id="movieNumber"></div>
-                                <div class="list-group-item" data-id="movieTitle"></div>
-                                <div class="list-group-item" data-id="movieType"></div>
-                                <div class="list-group-item" data-id="movieRating"></div>
-                                <div class="list-group-item" data-id="movieReleasedate"></div>
-                                <div class="list-group-item" data-id="movieDirector"></div>
-                                <div class="list-group-item" data-id="movieCast"></div>
-                                <div class="list-group-item" data-id="movieScreentime"></div>
-                                <div class="list-group-item" data-id="movieGenre"></div>
-                                <div class="list-group-item" data-id="movieStoryline"></div>
-                                <div class="list-group-item" data-id="movieEngname"></div>
-                                <div class="list-group-item" data-id="moviePoster"></div>
-                                <div class="list-group-item" data-id="movieSteelcut"></div>
-                                <div class="list-group-item" data-id="movieTrailer"></div>
-                            </div>
-                            <!-- /.list-group -->
+                        
+                        
+                        </div>	
+                    </div>
+                </div>
+                <div class="modal-footer">
+                	 <button id="movieInsertSaveBtn" type="button" class="btn btn-success">저장</button>
+                	 <button id="movieInsertInitBtn" type="button" class="btn btn-warning">초기화</button>
+                     <button id="movieDetailModalCloseBtn" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+             <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+	
+	
+	
+	
+
+	<!-- 상세보기용 모달 -->
+	<!-- Modal -->
+    <div class="modal fade" id="movieDetailModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="modalLabel"><span id="detailMovieTitle" style="font-weight: bold; font-size: 1.2em"></span></h4>
+                </div>
+                <div class="modal-body">
+                	<div class="panel panel-default">
+                        <div class="panel-body">
+                        	<div class="col-lg-12">
+	                            <div class="list-group">
+	                                <div class="hide" data-id="movieNumber"></div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">제목</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieTitle"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">타입</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieType"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">영화 관람가</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieRating"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">개봉일</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieReleasedate"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">감독</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieDirector"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">출연진</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieCast"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">상영 시간</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieScreentime"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">장르</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieGenre"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">줄거리</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: clip;" data-id="movieStoryline"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">영문 제목</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieEngname"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">영화 포스터</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="moviePoster"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">영화 스틸컷</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieSteelcut"></div>
+	                                </div>
+	                                <div class="list-group-item row">
+	                                	<div class="text-muted col-sm-3" style="width: 15%; ">영화 트레일러</div>
+	                                	<div class="well col-sm-9" style="width: 80%; text-overflow: ellipsis;" data-id="movieTrailer"></div>
+	                                </div>
+	                            </div>
+	                            <!-- /.list-group -->
+	                        </div>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -301,7 +377,7 @@ tr:hover td {
                 </div>
                 <div class="modal-footer">
                 	 <button id="movieUpdateBtn" type="button" class="btn btn-success">수정</button>
-                	 <button id="movieDeleteBtn" type="button" class="btn btn-warn">삭제</button>
+                	 <button id="movieDeleteBtn" type="button" class="btn btn-warning">삭제</button>
                      <button id="movieDetailModalCloseBtn" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
                 </div>
             </div>
@@ -342,6 +418,16 @@ tr:hover td {
 				"searching": false
 			});
 			
+			// 영화 추가 모달
+			$("#movieInsertModalButton").click(function(e) {
+				e.preventDefault();
+				$('#movieInsertModal').modal({
+			        show: true, 
+			        backdrop: 'static',
+			        keyboard: true
+			    });
+			});
+			
 			$('#movieListTableBody').on('click', 'tr', function (e) {
 				e.preventDefault();
 				
@@ -358,16 +444,31 @@ tr:hover td {
 						alert("시스템 오류입니다.");
 					},
 					success: function(data) {
-						$("#detailMovieTitle").text(data.movieTitle);
+						
+						var year = (data.movieReleasedate).substring(0, 4);
+						var month = (data.movieReleasedate).substring(4, 2);
+						var day = (data.movieReleasedate).substring(6, 2);
+						var genreTotal = data.movieGenre;
+						var genrePrefix = "<span class='label label-success label-md' style='font-size: 1.2em;'>";
+						var genreSuffix = "</span> ";
+						var genreTrim = genreTotal.replace(/\s/g, "");
+						var genreArray = genreTrim.split(",");
+						var genreFinal = "";
+						for(var g = 0 ; g < genreArray.length ; g++){
+							genreFinal += genrePrefix + genreArray[g] + genreSuffix;
+						}
+						
+						$("#detailMovieTitle").html("<p class='d-inline text-center'><span class='label label-success'>" + data.movieRating + "</span> &nbsp;&nbsp; " + data.movieTitle + "</p>");
+						$("div[data-id=movieNumber]").text(data.movieNumber);
 						$("div[data-id=movieTitle]").text(data.movieTitle);
 						$("div[data-id=movieType]").text(data.movieType);
 						$("div[data-id=movieRating]").text(data.movieRating);
-						$("div[data-id=movieReleasedate]").text(data.movieReleasedate);
+						$("div[data-id=movieReleasedate]").html(year + "-" + month + "-" + day);
 						$("div[data-id=movieDirector]").text(data.movieDirector);
 						$("div[data-id=movieCast]").text(data.movieCast);
-						$("div[data-id=movieScreentime]").text(data.movieScreentime);
-						$("div[data-id=movieGenre]").text(data.movieGenre);
-						$("div[data-id=movieStoryline]").text(data.movieStoryline);
+						$("div[data-id=movieScreentime]").text(data.movieScreentime + "분");
+						$("div[data-id=movieGenre]").html(genreFinal);
+						$("div[data-id=movieStoryline]").text(data.movieStoryline + data.movieStoryline + data.movieStoryline);
 						$("div[data-id=movieEngname]").text(data.movieEngname);
 						$("div[data-id=moviePoster]").text(data.moviePoster);
 						$("div[data-id=movieSteelcut]").text(data.movieSteelcut);
