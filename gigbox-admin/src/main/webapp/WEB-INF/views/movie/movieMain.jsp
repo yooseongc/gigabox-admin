@@ -37,10 +37,23 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+<!-- KOBIS API -->
+<script type="text/javascript" src="/resources/kobis/KobisOpenAPIRestService.js"></script>
+
 <style>
 tr:hover td {
     background-color: #6495ED !important;
 }
+
+.pagination {
+	display: block;
+	text-align: center;
+}
+
+.pagination > li > a {
+	float: none;
+}
+
 </style>
 </head>
 
@@ -269,7 +282,7 @@ tr:hover td {
 	
 	<!-- 영화 추가용 모달 -->
 	<!-- Modal -->
-    <div class="modal fade" id="movieInsertModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade" id="movieInsertSearchModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
@@ -277,12 +290,60 @@ tr:hover td {
                     <h4 class="modal-title">영화 추가</h4>
                 </div>
                 <div class="modal-body">
-                	<div class="panel panel-default">
-                        <div class="panel-body">
-                        
-                        
-                        </div>	
-                    </div>
+                	<div class="col-lg-12">
+                		<div class="page-header">
+                			<h5>영화 API 검색</h5>
+                		</div>
+                		<form class="form-horizontal">
+                			<div class="form-group">
+                				<label class="col-md-2 control-label" for="movieNm">영화 제목</label>
+                				<div class="col-md-10">
+                					<div class="input-group col-md-10">
+                						<input class="form-control" id="movieNm" name="movieNm" type="text">
+                					</div>
+                				</div>
+                			</div>
+                			<div class="form-group">
+                				<label class="col-md-2 control-label" for="directorNm">감독 이름</label>
+                				<div class="col-md-10">
+                					<div class="input-group col-md-10">
+                						<input class="form-control" id="directorNm" name="directorNm" type="text">
+                					</div>
+                				</div>
+                			</div>
+                			<div class="form-group">
+                				<label class="col-md-2 control-label" for="movieNM">개봉 연도</label>
+                				<div class="col-md-9">
+                					<div class="input-group">
+                						<input type="number" class="form-control" name="openStartDt" id="openStartDt">
+                                        <span class="input-group-addon">~</span>
+                                        <input type="number" class="form-control" name="openEndDt" id="openEndDt">
+                                        <span class="input-group-addon">년</span>
+                					</div>
+                				</div>
+                			</div>
+                			<div class="form-group">
+                				<div class="col-sm-12">
+                					<div class="input-group pull-right">
+                						<button class="btn btn-primary" id="movieInsertSearchButton" type="submit">
+                							검색<i class="fa fa-search spaceLeft"></i>
+                						</button>
+                					</div>
+                				</div>
+                			</div>
+                		</form>
+                		
+                		<div class="page-header">
+                			<h5>검색 결과</h5>
+                		</div>
+                		<div>
+                			<table width="100%" id="movieInsertSearchListTable" class="table table-bordered table-hover">
+                			
+                			</table>
+                			
+                			<ul id="movieInsertSearchListPagination" class="pagination"></ul>
+                		</div>
+                	</div>
                 </div>
                 <div class="modal-footer">
                 	 <button id="movieInsertSaveBtn" type="button" class="btn btn-success">저장</button>
@@ -412,7 +473,14 @@ tr:hover td {
 	<!-- Page-Level Demo Scripts - Tables - Use for reference -->
 	<script>
 		$(document).ready(function() {
+			
 			var table = $('#movieListTable').DataTable({
+				"responsive" : true,
+				"paging":   false,
+				"searching": false
+			});
+			
+			var movieInsertSearchTable = $('#movieInsertSearchListTable').DataTable({
 				"responsive" : true,
 				"paging":   false,
 				"searching": false
@@ -421,11 +489,53 @@ tr:hover td {
 			// 영화 추가 모달
 			$("#movieInsertModalButton").click(function(e) {
 				e.preventDefault();
-				$('#movieInsertModal').modal({
+				$('#movieInsertSearchModal').modal({
 			        show: true, 
 			        backdrop: 'static',
 			        keyboard: true
 			    });
+			});
+			
+			// 영화 API 검색
+			$("#movieInsertSearchButton").click(function(e) {
+				e.preventDefault();
+				var kobisService = new KobisOpenAPIRestService("44d0d4d6d46d53b3df1cc252113b2fe8");
+				var resJson = null;
+				try{
+					resJson = kobisService.getMovieList(true,{curPage:"1",itemPerPage:"10",
+						movieNm:$("#movieNm").val(),directorNm:$("#directorNm").val(),
+						openStartDt:$("#openStartDt").val(),openEndDt:$("#openEndDt").val()});
+					
+				}catch(er){
+					resJson = $.parseJSON(er.message);
+				}
+				
+				if(resJson.failInfo){
+					alert(resJson.failInfo.message);
+				}else{
+					var movieList = resJson.movieListResult.movieList;
+					var totCnt = resJson.movieListResult.totCnt;
+					
+					for(var i=0;i<movieList.length;i++){
+						var movie = movieList[i];
+						
+						var appendStr = "<tr><td>"+movie.movieNm+"</td><td>"+movie.movieNmEn+"</td><td>"+movie.prdtYear+"</td><td>"+movie.openDt+"</td><td>"+movie.repNationNm+"</td>";
+						
+						//감독
+						appendStr += "<td>";			
+						if(movie.directors != null && movie.directors != ""){
+							for(var dir in movie.directors){
+								appendStr += movie.directors[dir].peopleNm;
+							}				
+						}
+						appendStr += "</td></tr>";
+												
+						//$("#titleInfo p:eq(0)").html(totCnt);
+						$('#movieInsertSearchListTable').html("");
+						$('#movieInsertSearchListTable').append(appendStr);
+						
+					}
+				}
 			});
 			
 			$('#movieListTableBody').on('click', 'tr', function (e) {
