@@ -45,6 +45,13 @@ tr:hover td {
     background-color: #6495ED !important;
 }
 
+td {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .pagination {
 	display: block;
 	text-align: center;
@@ -328,27 +335,27 @@ tr:hover td {
                 						<button class="btn btn-primary" id="movieInsertSearchButton" type="submit">
                 							검색<i class="fa fa-search spaceLeft"></i>
                 						</button>
+                						<button id="movieInsertSearchInitBtn" type="button" class="btn btn-warning">초기화</button>
                 					</div>
                 				</div>
                 			</div>
                 		</form>
                 		
                 		<div class="page-header">
-                			<h5>검색 결과</h5>
+                			<h5>검색 결과 <span id="movieInsertSearchListCount"></span></h5>
                 		</div>
                 		<div>
                 			<table width="100%" id="movieInsertSearchListTable" class="table table-bordered table-hover">
-                			
+                				
                 			</table>
                 			
                 			<ul id="movieInsertSearchListPagination" class="pagination"></ul>
+                			<input type="hidden" value="1" id="movieInsertSearchListPaginationCurPage">
                 		</div>
                 	</div>
                 </div>
                 <div class="modal-footer">
-                	 <button id="movieInsertSaveBtn" type="button" class="btn btn-success">저장</button>
-                	 <button id="movieInsertInitBtn" type="button" class="btn btn-warning">초기화</button>
-                     <button id="movieDetailModalCloseBtn" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+                     <button id="movieInsertSearchModalCloseButton" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
                 </div>
             </div>
              <!-- /.modal-content -->
@@ -472,7 +479,23 @@ tr:hover td {
 
 	<!-- Page-Level Demo Scripts - Tables - Use for reference -->
 	<script>
+	
+	var movieInsertSearchCnt = 1;
+	
+	// 영화 API 검색 함수
+	function selectPagination(a) {
+		movieInsertSearchCnt = 2;
+		$("#movieInsertSearchListPaginationCurPage").val(a);
+		$("#movieInsertSearchButton").trigger("click");
+		var selectActiveNum = (a % 10);
+		$("#movieInsertSearchListPagination li").removeClass("active");
+		$("#movieInsertSearchListPagination li:eq("+selectActiveNum+")").addClass("active");
+		movieInsertSearchCnt = 1;
+	}
+	
 		$(document).ready(function() {
+			
+			
 			
 			var table = $('#movieListTable').DataTable({
 				"responsive" : true,
@@ -480,11 +503,6 @@ tr:hover td {
 				"searching": false
 			});
 			
-			var movieInsertSearchTable = $('#movieInsertSearchListTable').DataTable({
-				"responsive" : true,
-				"paging":   false,
-				"searching": false
-			});
 			
 			// 영화 추가 모달
 			$("#movieInsertModalButton").click(function(e) {
@@ -496,13 +514,37 @@ tr:hover td {
 			    });
 			});
 			
+			// 영화 API 검색 초기화
+			$("#movieInsertSearchInitBtn").click(function(e) {
+				e.preventDefault();
+				$("#movieNm").val("");
+				$("#directorNm").val("");
+				$("#openStartDt").val("");
+				$("#openEndDt").val("");
+				$('#movieInsertSearchListTable').html("");
+				$("#movieInsertSearchListPagination").html("");
+			});
+			
+			// 영화 API 검색 모달 닫기 버튼
+			$("#movieInsertSearchModalCloseButton").click(function(e) {
+				e.preventDefault();
+				$("#movieInsertSearchInitBtn").trigger("click");
+				$('#movieInsertSearchModal').hide();
+			});
+			
 			// 영화 API 검색
 			$("#movieInsertSearchButton").click(function(e) {
 				e.preventDefault();
+				
+				if (movieInsertSearchCnt == 1) {
+					$("#movieInsertSearchListPaginationCurPage").val(1);
+				} 
+				
+				var curPageNum = $("#movieInsertSearchListPaginationCurPage").val();
 				var kobisService = new KobisOpenAPIRestService("44d0d4d6d46d53b3df1cc252113b2fe8");
 				var resJson = null;
 				try{
-					resJson = kobisService.getMovieList(true,{curPage:"1",itemPerPage:"10",
+					resJson = kobisService.getMovieList(true,{curPage:curPageNum,itemPerPage:"10",
 						movieNm:$("#movieNm").val(),directorNm:$("#directorNm").val(),
 						openStartDt:$("#openStartDt").val(),openEndDt:$("#openEndDt").val()});
 					
@@ -512,30 +554,100 @@ tr:hover td {
 				
 				if(resJson.failInfo){
 					alert(resJson.failInfo.message);
-				}else{
+				} else {
+					
+					$('#movieInsertSearchListTable').html("");
+					$("#movieInsertSearchListPagination").html("");
+					
 					var movieList = resJson.movieListResult.movieList;
 					var totCnt = resJson.movieListResult.totCnt;
+					
+					var appendStr = "<thead> <tr> <th>영화 코드</th> <th>영화 제목</th> <th> 영문 제목</th> <th>개봉일</th> <th>제작 국가</th> <th>감독</th> </tr> </thead>";
+					
+					if (totCnt == 0) {
+						appendStr += "<tbody><tr><td colspan='2'>검색 결과가 없습니다.</td></tbody>";
+						return;
+					}
 					
 					for(var i=0;i<movieList.length;i++){
 						var movie = movieList[i];
 						
-						var appendStr = "<tr><td>"+movie.movieNm+"</td><td>"+movie.movieNmEn+"</td><td>"+movie.prdtYear+"</td><td>"+movie.openDt+"</td><td>"+movie.repNationNm+"</td>";
+						appendStr += "<tbody id='movieInsertSearchListTableBody'> <tr data-id='"+movie.movieCd+"'><td>"+movie.movieCd+"</td><td>"+movie.movieNm+"</td>";
 						
-						//감독
-						appendStr += "<td>";			
+						
+						appendStr += "<td>"
+						if(movie.movieNmEn != null && movie.movieNmEn != ""){
+							appendStr += movie.movieNmEn;
+						}
+						appendStr += "</td>"
+						
+						appendStr += "<td>"
+						if(movie.openDt != null && movie.openDt != ""){
+							appendStr += movie.openDt;
+						}
+						appendStr += "</td>"
+						
+						appendStr += "<td>"
+						if(movie.repNationNm != null && movie.repNationNm != ""){
+							appendStr += movie.repNationNm;
+						}
+						appendStr += "</td>"
+						
+						appendStr += "<td>"
 						if(movie.directors != null && movie.directors != ""){
 							for(var dir in movie.directors){
 								appendStr += movie.directors[dir].peopleNm;
 							}				
 						}
-						appendStr += "</td></tr>";
-												
-						//$("#titleInfo p:eq(0)").html(totCnt);
-						$('#movieInsertSearchListTable').html("");
-						$('#movieInsertSearchListTable').append(appendStr);
-						
+						appendStr += "</td>"
+						appendStr += "</tr></tbody>";
+					}
+					
+					$('#movieInsertSearchListTable').append(appendStr);
+					
+					// 페이징 처리
+					
+					var totPage = Math.ceil(totCnt / 10);
+					var curPageEnd = Math.ceil(curPageNum / 10.0 - 0.05) * 10;
+					var curPageStart = curPageEnd - 9;
+					if (curPageEnd > totPage) {
+						var curPageEndFact = totPage;
+					} else {
+						var curPageEndFact = curPageEnd;
+					}
+					
+					
+					$("#movieInsertSearchListPagination").append('<li id="mislpPrev"><a href="javascript:selectPagination('+(curPageStart-10)+')"><span class="glyphicon glyphicon-chevron-left"></span></a></li>');
+					for (var i = curPageStart; i <= curPageEndFact; i++) {
+						$("#movieInsertSearchListPagination").append('<li><a href="javascript:selectPagination('+i+')">'+i+'</a></li>');
+					}
+					$("#movieInsertSearchListPagination").append('<li id="mislpNext"><a href="javascript:selectPagination('+(curPageStart+10)+')"><span class="glyphicon glyphicon-chevron-right"></span></a></li>');
+					
+					if (curPageStart == 1) {
+						$("#mislpPrev").addClass("disabled");
+					} 
+					if (curPageEnd >= totPage) {
+						$("#mislpNext").addClass("disabled");
+					} 
+					
+					$("#movieInsertSearchListCount").html("(" +totCnt + "건)");
+					
+					if (movieInsertSearchCnt == 1) {
+						$("#movieInsertSearchListPagination li").removeClass("active");
+						$("#movieInsertSearchListPagination li:eq(1)").addClass("active");
 					}
 				}
+				
+			});
+			
+			// 영화 추가 > 영화 검색 API > 테이블 행 선택시 
+			$("#movieInsertSearchListTable").on("click", "#movieInsertSearchListTableBody tr", function(e) {
+				e.preventDefault();
+				
+				// 데이터 불러오기
+				var movieCdVal = $(this).attr("data-id");
+				alert(movieCdVal);
+				console.log(movieCdVal);
 			});
 			
 			$('#movieListTableBody').on('click', 'tr', function (e) {
@@ -555,9 +667,9 @@ tr:hover td {
 					},
 					success: function(data) {
 						
-						var year = (data.movieReleasedate).substring(0, 4);
-						var month = (data.movieReleasedate).substring(4, 2);
-						var day = (data.movieReleasedate).substring(6, 2);
+						var year = (data.movieReleasedate).substr(0, 4);
+						var month = (data.movieReleasedate).substr(4, 2);
+						var day = (data.movieReleasedate).substr(6, 2);
 						var genreTotal = data.movieGenre;
 						var genrePrefix = "<span class='label label-success label-md' style='font-size: 1.2em;'>";
 						var genreSuffix = "</span> ";

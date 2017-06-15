@@ -141,7 +141,7 @@
 							console.log("login success!!!");
 							$("#loginForm").submit();
 						} else if (resultData.message == 'ERROR') {
-							$("#errorMessage").text("시스템 오류입니다.");
+							$("#errorMessage").html("먼저 암호화를 해 주세요.<br><a href='/admin/enc/encForm'>이동</a>");
 							$("#errorMessage").show();
 						}
 					}
