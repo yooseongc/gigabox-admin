@@ -43,7 +43,7 @@
                         <h3 class="panel-title">관리자 로그인</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form" id="loginForm" method="post" action="/admin/loginSession">
+                        <form role="form" id="loginForm" method="post" action="/admin/auth/loginSession">
                             <fieldset>
                             	<div class="alert alert-danger" id="errorMessage">
                             		
@@ -109,7 +109,6 @@
 			$("#errorMessage").hide();
 			$("#loginButton").click(function(e) {
 				e.preventDefault();
-				console.log(!formCheck($("#adminId"), "아이디를", $("#errorMessage")));
 				if (!formCheck($("#adminId"), "아이디를", $("#errorMessage"))) {
 					return;
 				}
@@ -117,10 +116,11 @@
 					return;
 				}
 				
-				$.ajax({
-					url: "/admin/login.do",
+				$.getJSON({
+					url: "/admin/auth/login",
 					type: "POST",
 					data: $("#loginForm").serialize(),
+					dataType: "json",
 					error: function() {
 						$("#errorMessage").text("시스템 오류입니다.");
 						$("#errorMessage").show();

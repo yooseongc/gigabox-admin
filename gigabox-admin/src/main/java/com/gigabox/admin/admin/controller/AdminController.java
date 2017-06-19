@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -15,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,14 +34,14 @@ public class AdminController {
 	@Inject
 	private AdminService adminService;
 	
-	@RequestMapping(value="/login", method=RequestMethod.GET)
+	@RequestMapping(value="/auth/login", method=RequestMethod.GET)
 	public String loginGET(@ModelAttribute("loginDTO") LoginDTO loginDTO) {
 		logger.info("LOGIN PAGE LOADING...");
 		return "/admin/login";
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/login", method=RequestMethod.POST)
+	@RequestMapping(value="/auth/login", method=RequestMethod.POST,produces = "application/json")
 	public ResponseEntity<Map<String, Object>> loginPOST(LoginDTO loginDTO, HttpSession session) {
 		logger.info("LOGIN PROCESSING...");
 		
@@ -88,8 +88,9 @@ public class AdminController {
 					if (loginDTO.isUseCookie()) {
 						int amount = 60 * 60 * 24 * 7; // 1주일
 						Date sessionLimit = new Date(System.currentTimeMillis() + 1000 * amount);
-						
+						logger.info("AUTO LOGIN...");
 						adminService.autoLogin(loginDTO.getAdminId(), session.getId(), sessionLimit);
+						logger.info("AUTO LOGIN SUCCESSED");
 					}
 					
 					return new ResponseEntity<Map<String, Object>> (resultMap, HttpStatus.OK);
@@ -111,20 +112,21 @@ public class AdminController {
 		
 	}
 	
-	@RequestMapping(value="/loginSession", method=RequestMethod.POST)
-	public void loginSessionCreation(LoginDTO dto, HttpSession session, Model model) {
+	@RequestMapping(value="/auth/loginSession", method=RequestMethod.POST)
+	public String loginSessionCreation(LoginDTO dto, HttpSession session, Model model) {
 		logger.info("LOGIN PROCESS - Create Session");
 		AdminVO adminVO = new AdminVO();
 		adminVO.setAdminId(dto.getAdminId());
 		model.addAttribute("adminVO", adminVO);
+		return "/admin/loginSession";
 	}
 	
-	@RequestMapping(value="/logout", method=RequestMethod.GET)
+	@RequestMapping(value="/auth/logout", method=RequestMethod.GET)
 	public String logout(HttpSession session) {
 		logger.info("LOGOUT PROCESS - Remove Session and Cookie");
 		adminService.autoLogin(((AdminVO) session.getAttribute("login")).getAdminId(), "none", new Date(System.currentTimeMillis()));
 		session.removeAttribute("login");
-		return "redirect:/admin/login";
+		return "redirect:/admin/auth/login";
 	}
 	
 }

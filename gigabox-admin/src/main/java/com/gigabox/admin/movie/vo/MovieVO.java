@@ -21,6 +21,8 @@ public class MovieVO {
 	private String moviePoster;
 	private String movieSteelcut;
 	private String movieTrailer;
+	private int movieCode;
+	private String movieStatus;
 	
 	public int getMovieNumber() {
 		return movieNumber;
@@ -106,6 +108,18 @@ public class MovieVO {
 	public void setMovieTrailer(String movieTrailer) {
 		this.movieTrailer = movieTrailer;
 	}
+	public int getMovieCode() {
+		return movieCode;
+	}
+	public void setMovieCode(int movieCode) {
+		this.movieCode = movieCode;
+	}
+	public String getMovieStatus() {
+		return movieStatus;
+	}
+	public void setMovieStatus(String movieStatus) {
+		this.movieStatus = movieStatus;
+	}
 	
 	@Override
 	public String toString() {
@@ -114,7 +128,7 @@ public class MovieVO {
 				+ movieDirector + ", movieCast=" + movieCast + ", movieScreentime=" + movieScreentime + ", movieGenre="
 				+ movieGenre + ", movieStoryline=" + movieStoryline + ", movieEngname=" + movieEngname
 				+ ", moviePoster=" + moviePoster + ", movieSteelcut=" + movieSteelcut + ", movieTrailer=" + movieTrailer
-				+ "]";
+				+ ", movieCode=" + movieCode + ", movieStatus=" + movieStatus + "]";
 	}
 	
 }

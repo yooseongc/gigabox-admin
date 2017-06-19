@@ -15,7 +15,7 @@ public class UploadUtil {
 
 	public static void fileUpload(MultipartFile file, String fileDirPath, String fileName, String fileType, boolean thumb) throws IOException {
 
-		File uploadFile = new File(fileDirPath + File.pathSeparator + fileName + "." + fileType);
+		File uploadFile = new File(fileDirPath + File.separator + fileName + "." + fileType);
 		FileCopyUtils.copy(file.getBytes(), uploadFile);
 		if (thumb) {
 			makeThumbnail(fileDirPath, fileName, fileType);
@@ -25,15 +25,15 @@ public class UploadUtil {
 	
 	private static void makeThumbnail(String fileDirPath, String fileName, String fileType) throws IOException {
 		
-		File thumbDir = new File(fileDirPath + File.pathSeparator + "thumb");
+		File thumbDir = new File(fileDirPath + File.separator + "thumb");
 		if (!thumbDir.exists()) {
 			thumbDir.mkdir();
 		}
 		BufferedImage sourceImg = 
-				ImageIO.read(new File(fileDirPath + File.pathSeparator + fileName + fileType));
+				ImageIO.read(new File(fileDirPath + File.separator + fileName + "." + fileType));
 		BufferedImage destImg = 
 				Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, 100);
-		String thumbName = fileDirPath + File.pathSeparator + "thumb" + File.pathSeparator + "thumb_" + fileName + fileType;
+		String thumbName = fileDirPath + File.separator + "thumb" + File.separator + "thumb_" + fileName + "." + fileType;
 		File thumbFile = new File(thumbName);
 		
 		ImageIO.write(destImg, fileType, thumbFile);

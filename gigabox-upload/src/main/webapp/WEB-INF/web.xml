@@ -59,4 +59,14 @@
 		<url-pattern>/</url-pattern>
 	</filter-mapping>
 	
+	<!-- COLS filter -->
+	<filter>
+    	<filter-name>cors</filter-name>
+    	<filter-class>com.gigabox.upload.utils.SimpleCORSFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>cors</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 </web-app>

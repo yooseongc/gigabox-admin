@@ -150,7 +150,14 @@
       	<artifactId>jackson-databind</artifactId>
       	<version>2.6.1</version>
       </dependency>
-	
+	  
+	  <!-- Json View -->
+	  <dependency>
+	     <groupId>org.codehaus.jackson</groupId>
+	     <artifactId>jackson-mapper-asl</artifactId>
+	     <version>1.9.13</version>
+	  </dependency>
+	  
 	  <!-- file Upload -->
 	  <dependency>
 	  	<groupId>commons-fileupload</groupId>

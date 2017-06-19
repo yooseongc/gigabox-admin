@@ -45,7 +45,7 @@ public class MovieDAOImpl implements MovieDAO {
 
 	@Override
 	public int movieDelete(MovieVO movieVO) {
-		return sqlSession.delete(namespace + ".movieDelete", movieVO);
+		return sqlSession.update(namespace + ".movieDelete", movieVO);
 	}
 
 }

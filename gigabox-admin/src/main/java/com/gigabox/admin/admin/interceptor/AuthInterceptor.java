@@ -42,12 +42,18 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 					logger.info("LOGIN INFO WAS FOUND BY LOGIN COOKIE= " + adminVO.toString());
 					session.setAttribute("login", adminVO);
 					return true;
-				} 
+				} else {
+					logger.info("LOGIN COOKIE FOUND BUT IT DIFFERS FROM SAVED SESSION KEY");
+					logger.info("REDIRECT TO /admin/auth/login");
+					response.sendRedirect("/admin/auth/login");
+					return false;
+				}
 				
+			} else {
+				logger.info("LOGIN COOKIE NOT FOUND...");
+				response.sendRedirect("/admin/auth/login");
+				return false;
 			}
-			logger.info("LOGIN COOKIE NOT FOUND...");
-			response.sendRedirect("/admin/login");
-			return false;
 		}
 		
 		logger.info("SESSION EXISTS");

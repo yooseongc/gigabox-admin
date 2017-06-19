@@ -19,7 +19,8 @@
 		<result property="moviePoster" column="MOVIE_POSTER" />
 		<result property="movieSteelcut" column="MOVIE_STEELCUT" />
 		<result property="movieTrailer" column="MOVIE_TRAILER" />
-		
+		<result property="movieCode" column="MOVIE_CODE" />
+		<result property="movieStatus" column="MOVIE_STATUS" />
 	</resultMap>
 	
 	<select id="movieList" resultType="movie" resultMap="movieResultMap">
@@ -30,8 +31,9 @@
 			SELECT LIST.*, ROWNUM AS RNUM 
 			FROM 
 			(
-				SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_RATING, MOVIE_RELEASEDATE, MOVIE_GENRE  
+				SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_CODE, MOVIE_STATUS, MOVIE_RELEASEDATE, MOVIE_GENRE  
 				FROM TBL_MOVIE 
+				WHERE MOVIE_STATUS NOT IN('삭제') 
 				ORDER BY MOVIE_RELEASEDATE DESC, MOVIE_TITLE ASC  
 			) LIST 
 		) 
@@ -50,8 +52,9 @@
 			SELECT LIST.*, ROWNUM AS RNUM 
 			FROM 
 			(
-				SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_RATING, MOVIE_RELEASEDATE, MOVIE_GENRE  
+				SELECT MOVIE_NUMBER 
 				FROM TBL_MOVIE 
+				WHERE MOVIE_STATUS NOT IN('삭제') 
 				ORDER BY MOVIE_RELEASEDATE DESC, MOVIE_TITLE ASC 
 			) LIST 
 		) 
@@ -74,31 +77,32 @@
 			SELECT SEQ_MOVIE.NEXTVAL FROM DUAL 
 		</selectKey>
 		INSERT INTO TBL_MOVIE (
-		  MOVIE_NUMBER, MOVIE_TITLE, MOVIE_RATING, MOVIE_RELEASEDATE, 
+		  MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_RATING, MOVIE_RELEASEDATE, 
 		  MOVIE_DIRECTOR, MOVIE_CAST, MOVIE_SCREENTIME, MOVIE_GENRE, 
 		  MOVIE_STORYLINE, MOVIE_ENGNAME, MOVIE_POSTER, MOVIE_STEELCUT, 
-		  MOVIE_TRAILER ) 
+		  MOVIE_TRAILER, MOVIE_CODE, MOVIE_STATUS ) 
 		VALUES (
-		  #{movieNumber}, #{movieTitle}, #{movieRating}, #{movieReleasedate},
+		  #{movieNumber}, #{movieTitle}, #{movieType}, #{movieRating}, #{movieReleasedate},
 		  #{movieDirector}, #{movieCast}, #{movieScreentime}, #{movieGenre},
 		  #{movieStoryline}, #{movieEngname}, #{moviePoster}, #{movieSteelcut},
-		  #{movieTrailer} 
+		  #{movieTrailer}, #{movieCode}, #{movieStatus} 
 		  ) 
 	</insert>
 	
 	<update id="movieUpdate" parameterType="movie">
 		UPDATE TBL_MOVIE 
 		SET 
-		  MOVIE_TITLE = #{movieTitle}, MOVIE_RATING = #{movieRating}, MOVIE_RELEASEDATE = #{movieReleasedate}, 
+		  MOVIE_TITLE = #{movieTitle}, MOVIE_TYPE = #{movieType}, MOVIE_RATING = #{movieRating}, MOVIE_RELEASEDATE = #{movieReleasedate}, 
 		  MOVIE_DIRECTOR = #{movieDirector}, MOVIE_CAST = #{movieCast}, MOVIE_SCREENTIME = #{movieScreentime}, 
 		  MOVIE_GENRE = #{movieGenre}, MOVIE_STORYLINE = #{movieStoryline}, MOVIE_ENGNAME = #{movieEngname}, 
-		  MOVIE_POSTER = #{moviePoster}, MOVIE_STEELCUT = #{movieSteelcut}, MOVIE_TRAILER = #{movieTrailer} 
+		  MOVIE_STATUS = #{movieStatus}
 		WHERE MOVIE_NUMBER = #{movieNumber} 
 	</update>
 	
-	<delete id="movieDelete" parameterType="movie">
-		DELETE FROM TBL_MOVIE 
+	<update id="movieDelete" parameterType="movie">
+		UPDATE TBL_MOVIE 
+		SET MOVIE_STATUS = '삭제'  
 		WHERE MOVIE_NUMBER = #{movieNumber} 
-	</delete>
+	</update>
 	
 </mapper>
