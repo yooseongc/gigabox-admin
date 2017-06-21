@@ -73,16 +73,16 @@
  
 <body>
 
-	<div id="admin_notice_wrapper">
+	<div id="admin_faq_wrapper">
 
 		<c:import url="/templates/header.jsp" />
 		<c:import url="/templates/aside.jsp" />
 
 		<div id="page-wrapper">
-			<section id="admin_notice_section">
+			<section id="admin_faq_section">
 				<div class="row">
 					<div class="col-lg-12">
-						<h3 class="page-header">공지사항 관리 페이지</h3>
+						<h3 class="page-header">FAQ 관리 페이지</h3>
 					</div>
 					<!-- /.col-lg-12 -->
 				</div>
@@ -90,39 +90,32 @@
 
 				<div class="row">
 	                <div class="col-lg-12">
-	                <article id="admin_notice_table_article">
+	                <article id="admin_faq_table_article">
 	                    <div class="panel panel-default">
 	                        <div class="panel-heading" style="height: 50px;">
-	                            <i class="fa fa-info-circle fa-fw"></i> 공지사항 목록
+	                            <i class="fa fa-question-circle fa-fw"></i> FAQ 목록
 	                            <div class="pull-right">
 	                                <div class="btn-group">
-	                                    <button type="button" class="btn btn-success btn-sm" id="noticeInsertModalButton">공지사항 추가</button>
+	                                    <button type="button" class="btn btn-success btn-sm" id="faqInsertModalButton">FAQ 추가</button>
 	                                </div>
 	                            </div>
 	                        </div>
 	                        <!-- /.panel-heading -->
 	                        <div class="panel-body">
-	                            <table width="100%" class="table table-bordered table-hover" id="noticeListTable">
+	                            <table width="100%" class="table table-bordered table-hover" id="faqListTable">
 	                                <thead>
 	                                    <tr>
 	                                        <th style="text-align: center;">번호</th>
-	                                        <th style="text-align: center;">지점</th>
+	                                        <th style="text-align: center;">분류</th>
 	                                        <th style="text-align: center;">제목</th>
-	                                        <th style="text-align: center;">등록일</th>
 	                                    </tr>
 	                                </thead>
-	                                <tbody id="noticeListTableBody">
-	                                	<c:forEach var="noticeItem" items="${noticeList}">
-	                                    <tr data-id="${noticeItem.noticeNumber}">
-	                                        <td style="text-align: center;">${noticeItem.noticeNumber}</td>
-	                                        <td style="text-align: center;">${noticeItem.noticeBranchname}</td>
-	                                        <c:if test="${noticeItem.noticeStatus == '중요'}">
-	                                        	<td style="text-align: left; font-weight: bold;"><span class="label label-danger">공지</span> &nbsp;${noticeItem.noticeTitle}</td>
-	                                        </c:if>
-	                                        <c:if test="${noticeItem.noticeStatus == '일반'}">
-	                                        	<td style="text-align: left;">${noticeItem.noticeTitle}</td>
-	                                        </c:if>
-	                                        <td style="text-align: center;"><fmt:formatDate value="${noticeItem.noticeRegisterdate}" pattern="yyyy-MM-dd"/></td>
+	                                <tbody id="faqListTableBody">
+	                                	<c:forEach var="faqItem" items="${faqList}">
+	                                    <tr data-id="${faqItem.faqNumber}">
+	                                        <td style="text-align: center;">${faqItem.faqNumber}</td>
+	                                        <td style="text-align: center;"><span class="label label-success">${faqItem.faqType}</span></td>
+	                                        <td style="text-align: left;">${faqItem.faqTitle}</td>
 	                                    </tr>
 	                                    </c:forEach>
 	                                </tbody>
@@ -135,31 +128,33 @@
 									<ul class="pagination">
 			
 										<c:if test="${pageMaker.prev}">
-											<li><a href="/admin/cc/notice/noticeMain${pageMaker.makeQuery(pageMaker.startPage-1)}">&laquo;</a></li>
+											<li><a href="/admin/cc/faq/faqMain${pageMaker.makeQuery(pageMaker.startPage-1)}">&laquo;</a></li>
 										</c:if>
 			
 										<c:forEach begin="${pageMaker.startPage}"
 											end="${pageMaker.endPage}" var="idx">
 											<li 
 												<c:out value="${pageMaker.criteria.page == idx?'class=\"active\"':''}"/>>
-												<a href="/admin/cc/notice/noticeMain${pageMaker.makeQuery(idx)}">${idx}</a>
+												<a href="/admin/cc/faq/faqMain${pageMaker.makeQuery(idx)}">${idx}</a>
 											</li>
 										</c:forEach>
 			
 										<c:if test="${pageMaker.next && pageMaker.endPage > 0}">
-											<li><a href="/admin/cc/notice/movieMain${pageMaker.makeQuery(pageMaker.endPage+1)}">&raquo;</a></li>
+											<li><a href="/admin/cc/faq/movieMain${pageMaker.makeQuery(pageMaker.endPage+1)}">&raquo;</a></li>
 										</c:if>
 									</ul>
 									<div class="form-group input-group" style="margin: 0 auto;">
-										<form id="noticeSearchForm" class="form-horizontal">
+										<form id="faqSearchForm" class="form-horizontal">
 			                                <select id="searchType" name="searchType" class="form-control" style="width: 200px; height: 35px;">
-			                                    <option value="t">제목</option>
-			                                    <option value="c">내용</option>
-			                                    <option value="tc">제목+내용</option>
-			                                    <option value="b">지점</option>
+			                                    <option value="마일리지">마일리지</option>
+			                                    <option value="영화예매">영화예매</option>
+												<option value="결제">결제</option>
+												<option value="영화관">영화관</option>           
+												<option value="홈페이지">홈페이지</option>
+												<option value="기타">기타</option>
 			                                </select>
 			                                <input type="text" id="searchKeyword" name="searchKeyword" class="form-control" placeholder="검색할 내용을 입력해주세요." style="width: 600px; height: 35px;">
-			                                <button type="submit" id="noticeSearchButton" class="btn btn-primary">검색</button>
+			                                <button type="submit" id="faqSearchButton" class="btn btn-primary">검색</button>
 			                            </form>
 		                            </div>
 								</div>
@@ -183,47 +178,37 @@
 
 	<!-- 공지사항 상세보기 모달 -->
 	<!-- Modal -->
-    <div class="modal fade" id="noticeDetailModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade" id="faqDetailModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">공지사항 상세보기</h4>
+                    <h4 class="modal-title">FAQ 상세보기</h4>
                 </div>
                 <div class="modal-body">
                 	<div class="col-lg-12">
-                		<form class="form-horizontal" id="noticeDetailForm">
+                		<form class="form-horizontal" id="faqDetailForm">
                 			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeTitle">제목</label>
+                				<label class="col-sm-2 control-label" for="faqTitle">제목</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-                						<input class="form-control" id="noticeTitle" name="noticeTitle" type="text" 
+                						<input class="form-control" id="faqTitle" name="faqTitle" type="text" 
                 							readonly="readonly">
-                						<input type="hidden" id="noticeStatus" name="noticeStatus">
-                						<input type="hidden" id="noticeNumber" name="noticeNumber">
+                						<input type="hidden" id="faqNumber" name="faqNumber">
                 					</div>
                 				</div>
                 			</div>
                 			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeBranchname">지점</label>
+                				<label class="col-sm-2 control-label" for="faqType">분류</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-                						<input class="form-control" id="noticeBranchname" name="noticeBranchname" type="text"
+                						<input class="form-control" id="faqType" name="faqType" type="text"
                 							readonly="readonly">
                 					</div>
                 				</div>
                 			</div>
                 			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeRegisterdate">작성일</label>
-                				<div class="col-sm-10">
-                					<div class="input-group col-sm-12">
-	                					<input class="form-control" id="noticeRegisterdate" name="noticeRegisterdate" type="text"
-	                						readonly="readonly">
-	                				</div>
-	                			</div>
-                			</div>
-                			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeContent">내용</label>
+                				<label class="col-sm-2 control-label" for="faqContent">내용</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
                 						<div class="form-control" id="faqContent" style="height: 400px;"></div>
@@ -234,9 +219,9 @@
                 	</div>
                 </div>
                 <div class="modal-footer">
-                	 <button id="noticeUpdateModalButton" type="button" class="btn btn-success" data-dismiss="modal">수정</button>
-                     <button id="noticeDeleteButton" type="button" class="btn btn-warning" data-dismiss="modal">삭제</button>
-                     <button id="noticeDetailModalCloseButton" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+                	 <button id="faqUpdateModalButton" type="button" class="btn btn-success" data-dismiss="modal">수정</button>
+                     <button id="faqDeleteButton" type="button" class="btn btn-warning" data-dismiss="modal">삭제</button>
+                     <button id="faqDetailModalCloseButton" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
                 </div>
             </div>
              <!-- /.modal-content -->
@@ -247,50 +232,44 @@
     
     <!-- 공지사항 추가 모달 -->
 	<!-- Modal -->
-    <div class="modal fade" id="noticeInsertModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade" id="faqInsertModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">공지사항 등록</h4>
+                    <h4 class="modal-title">FAQ 등록</h4>
                 </div>
                 <div class="modal-body">
                 	<div class="col-lg-12">
-                		<form class="form-horizontal" id="noticeInsertForm">
+                		<form class="form-horizontal" id="faqInsertForm">
                 			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeTitleI">제목</label>
+                				<label class="col-sm-2 control-label" for="faqTitleI">제목</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-                						<input class="form-control" id="noticeTitleI" name="noticeTitle" type="text">
+                						<input class="form-control" id="faqTitleI" name="faqTitle" type="text">
                 					</div>
                 				</div>
                 			</div>
                 			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeBranchnameI">지점</label>
+                				<label class="col-sm-2 control-label" for="faqTypeI">분류</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-                						<select class="form-control" id="noticeBranchnameI" name="noticeBranchname">
-                							<option value="전체">전체</option>
+                						<select class="form-control" id="faqTypeI" name="faqType">
+		                                    <option value="마일리지">마일리지</option>
+		                                    <option value="영화예매">영화예매</option>
+											<option value="결제">결제</option>
+											<option value="영화관">영화관</option>           
+											<option value="홈페이지">홈페이지</option>
+											<option value="기타">기타</option>
                 						</select>
                 					</div>
                 				</div>
                 			</div>
                 			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeStautsI">공지 설정</label>
+                				<label class="col-sm-2 control-label" for="faqContentI">내용</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-                						<select class="form-control" id="noticeStatusI" name="noticeStatus">
-                							<option value="일반">일반</option>
-                							<option value="중요">중요</option>
-	                					</select>
-                					</div>
-                				</div>
-                			</div>
-                			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeContentI">내용</label>
-                				<div class="col-sm-10">
-                					<div class="input-group col-sm-12">
-                						<textarea class="form-control summernote" id="noticeContentI" name="noticeContent">
+                						<textarea class="form-control summernote" id="faqContentI" name="faqContent">
                 						</textarea>
                 					</div>
                 				</div>
@@ -299,8 +278,8 @@
                 	</div>
                 </div>
                 <div class="modal-footer">
-                	 <button id="noticeInsertSaveButton" type="button" class="btn btn-warning" data-dismiss="modal">저장</button>
-                     <button id="noticeInsertModalCloseButton" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+                	 <button id="faqInsertSaveButton" type="button" class="btn btn-warning" data-dismiss="modal">저장</button>
+                     <button id="faqInsertModalCloseButton" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
                 </div>
             </div>
              <!-- /.modal-content -->
@@ -311,51 +290,45 @@
     
 	<!-- 공지사항 수정 모달 -->
 	<!-- Modal -->
-    <div class="modal fade" id="noticeUpdateModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade" id="faqUpdateModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">공지사항 수정</h4>
+                    <h4 class="modal-title">FAQ 수정</h4>
                 </div>
                 <div class="modal-body">
                 	<div class="col-lg-12">
-                		<form class="form-horizontal" id="noticeUpdateForm">
+                		<form class="form-horizontal" id="faqUpdateForm">
                 			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeTitleU">제목</label>
+                				<label class="col-sm-2 control-label" for="faqTitleU">제목</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-                						<input class="form-control" id="noticeTitleU" name="noticeTitle" type="text">
-                						<input type="hidden" id="noticeNumberU" name="noticeNumber">
+                						<input class="form-control" id="faqTitleU" name="faqTitle" type="text">
+                						<input type="hidden" id="faqNumberU" name="faqNumber">
                 					</div>
                 				</div>
                 			</div>
                 			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeBranchnameU">지점</label>
+                				<label class="col-sm-2 control-label" for="faqTypeU">분류</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-                						<select class="form-control" id="noticeBranchnameU" name="noticeBranchname">
-                							<option value="전체">전체</option>
-                						</select>
-                					</div>
-                				</div>
-                			</div>
-                			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeStatusU">공지 설정</label>
-                				<div class="col-sm-10">
-                					<div class="input-group col-sm-12">
-                						<select class="form-control" id="noticeStatusU" name="noticeStatus">
-                							<option value="일반">일반</option>
-                							<option value="중요">중요</option>
+                						<select class="form-control" id="faqTypeU" name="faqType">
+                							<option value="mileage">마일리지</option>
+		                                    <option value="reservation">영화예매</option>
+											<option value="payment">결제</option>
+											<option value="cinema">영화관</option>           
+											<option value="homepage">홈페이지</option>
+											<option value="etc">기타</option>
 	                					</select>
                 					</div>
                 				</div>
                 			</div>
                 			<div class="form-group">
-                				<label class="col-sm-2 control-label" for="noticeContentU">내용</label>
+                				<label class="col-sm-2 control-label" for="faqContentU">내용</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-                						<textarea class="form-control summernote" id="noticeContentU" name="noticeContent">
+                						<textarea class="form-control summernote" id="faqContentU" name="faqContent">
                 						</textarea>
                 					</div>
                 				</div>
@@ -364,8 +337,8 @@
                 	</div>
                 </div>
                 <div class="modal-footer">
-                	 <button id="noticeUpdateSaveButton" type="button" class="btn btn-warning" data-dismiss="modal">저장</button>
-                     <button id="noticeUpdateModalCloseButton" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+                	 <button id="faqUpdateSaveButton" type="button" class="btn btn-warning" data-dismiss="modal">저장</button>
+                     <button id="faqUpdateModalCloseButton" type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
                 </div>
             </div>
              <!-- /.modal-content -->
@@ -376,37 +349,8 @@
 
 	<script>
 	
-	// 날짜 변환 함수
-	function dateToYYYYMMDD(date) {
-	    function pad(num) {
-	        num = num + '';
-	        return num.length < 2 ? '0' + num : num;
-	    }
-	    return date.getFullYear() + '-' + pad(date.getMonth()+1) + '-' + pad(date.getDate());
-	}
-
-	
 	$(document).ready(function() {
 	
-		// branchname 미리 주기
-		$.ajax({
-			url: "/admin/cc/notice/branchnameList",
-			type: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				"X-HTTP-Method-Override": "PUT"
-			},
-			error: function() {
-				console.log("지점 이름 불러오기 실패");
-			},
-			success: function(data) {
-				for (var i = 0; i < data.length; i++) {
-					$("#noticeBranchnameI").append("<option value='" + data[i].branchName + "'>" + data[i].branchName + "</option>");
-					$("#noticeBranchnameU").append("<option value='" + data[i].branchName + "'>" + data[i].branchName + "</option>");
-				}			
-			}
-		});
-		
 		
 		if ('${param.searchType}' != '') {
 			$("#searchType").val('${param.searchType}');
@@ -415,9 +359,9 @@
 			$("#searchKeyword").val('${param.searchKeyword}');
 		}
 			
-		$('#noticeSearchButton').on("click", function(event) {
+		$('#faqSearchButton').on("click", function(event) {
 			event.preventDefault();
-			var queryString = "/admin/cc/notice/noticeMain"
+			var queryString = "/admin/cc/faq/faqMain"
 				+ '${pageMaker.makeQuery(1)}'
 				+ "&searchType="
 				+ $("#searchType").val()
@@ -426,11 +370,11 @@
 			self.location = queryString;
 		});
 		
-		// 공지사항 추가 
-		$("#noticeInsertModalButton").click(function(e) {
+		// FAQ 추가 
+		$("#faqInsertModalButton").click(function(e) {
 			e.preventDefault();
-			$("#noticeTitleI").val("");
-			$('#noticeContentI').summernote({
+			$("#faqTitleI").val("");
+			$('#faqContentI').summernote({
 		        height: 300,          // 기본 높이값
 		        minHeight: null,      // 최소 높이값(null은 제한 없음)
 		        maxHeight: null,      // 최대 높이값(null은 제한 없음)
@@ -447,53 +391,53 @@
 		            ['view', ['fullscreen', 'codeview']]
 		          ]
 		    });
-			$("#noticeContentI").summernote("code", "");
+			$("#faqContentI").summernote("code", "");
 			
 			// 모달 관리
-            $('#noticeInsertModal').modal({
+            $('#faqInsertModal').modal({
 		        show: true, 
 		        backdrop: 'static',
 		        keyboard: true
 		    });
 		});
 		
-		// 공지사항 추가 모달 저장
-		$("#noticeInsertSaveButton").click(function(e) {
+		// FAQ 추가 모달 저장
+		$("#faqInsertSaveButton").click(function(e) {
 			e.preventDefault();
 			$.ajax({
-				url: "/admin/cc/notice/noticeInsert",
+				url: "/admin/cc/faq/faqInsert",
 				type: "POST",
-				data: $("#noticeInsertForm").serialize(),
+				data: $("#faqInsertForm").serialize(),
 				error: function() {
-					console.log("공지사항 추가 실패");
+					console.log("FAQ 추가 실패");
 				},
 				success: function(data) {
 					if (data.result == 'SUCCESS') {
-						alert("공지사항 추가에 성공하였습니다.");
+						alert("FAQ 추가에 성공하였습니다.");
 						self.location.reload(true);
 					} else {
-						alert("공지사항 추가에 실패하였습니다.");
+						alert("FAQ 추가에 실패하였습니다.");
 					}		
 				}
 			});
 			
 		});
 		
-		// 공지사항 추가 모달 닫기 버튼
-		$("#noticeInsertModalCloseButton").click(function(e) {
+		// FAQ 추가 모달 닫기 버튼
+		$("#faqInsertModalCloseButton").click(function(e) {
 			e.preventDefault();
-			$('#noticeInsertModal').modal("hide");
+			$('#faqInsertModal').modal("hide");
 		});
 		
 		
-		// 공지사항 세부내용 불러오기
-		$('#noticeListTableBody').on('click', 'tr', function(e) {
+		// FAQ 세부내용 불러오기
+		$('#faqListTableBody').on('click', 'tr', function(e) {
 			e.preventDefault();
 			
 			// 데이터 불러오기 파트
 			var dataId = $(this).attr("data-id");
 			$.ajax({
-				url: "/admin/cc/notice/noticeDetail/" + dataId,
+				url: "/admin/cc/faq/faqDetail/" + dataId,
 				type: "PUT",
 				headers: {
 					"Content-Type": "application/json",
@@ -504,35 +448,22 @@
 				},
 				success: function(data) {
 					
-					var date = new Date(data.noticeRegisterdate);
-					var dateStr = dateToYYYYMMDD(date);
+					$("#faqNumber").val(data.faqNumber);
+					$("#faqTitle").val(data.faqTitle);
+					$("#faqType").val(data.faqType);
+					$("#faqContent").html(data.faqContent);
 					
-					$("#noticeNumber").val(data.noticeNumber);
-					$("#noticeBranchname").val(data.noticeBranchname);
-					$("#noticeTitle").val(data.noticeTitle);
-					$("#noticeContent").html(data.noticeContent);
-					$("#noticeRegisterdate").val(dateStr);
-					// status
-					var status = data.noticeStatus;
-					if (status == '중요') {
-						$("#noticeTitle").prepend("<span class='label label-danger'>공지</span>").css("font-weight", "bold");
-					} 
 					
 					// 업데이트 모달에 정보를 미리 줌.
-					$("#noticeNumberU").val(data.noticeNumber);
-					$("#noticeTitleU").val(data.noticeTitle);
-					$("#noticeBranchnameU option").each(function() {
-						if ($(this).val() == data.noticeBranchname) {
-							$(this).prop("selected", true);
-						}
-					});
-					$("#noticeStatus option").each(function() {
-						if ($(this).val() == data.noticeStatus) {
+					$("#faqNumberU").val(data.faqNumber);
+					$("#faqTitleU").val(data.faqTitle);
+					$("#faqTypeU option").each(function() {
+						if ($(this).val() == data.faqType) {
 							$(this).prop("selected", true);
 						}
 					});
 					
-					$('#noticeContentU').summernote({
+					$('#faqContentU').summernote({
 				        height: 300,          // 기본 높이값
 				        minHeight: null,      // 최소 높이값(null은 제한 없음)
 				        maxHeight: null,      // 최대 높이값(null은 제한 없음)
@@ -549,10 +480,10 @@
 				            ['view', ['fullscreen', 'codeview']]
 				          ]
 				    });
-					$("#noticeContentU").summernote("code", data.noticeContent);
+					$("#faqContentU").summernote("code", data.faqContent);
 					
 					// 모달 관리
-		            $('#noticeDetailModal').modal({
+		            $('#faqDetailModal').modal({
 				        show: true, 
 				        backdrop: 'static',
 				        keyboard: true
@@ -563,43 +494,43 @@
 			
 	    });
 		
-		// 공지사항 수정 버튼 클릭 --> 수정 모달 생성
-        $("#noticeUpdateModalButton").click(function(e) {
+		// FAQ 수정 버튼 클릭 --> 수정 모달 생성
+        $("#faqUpdateModalButton").click(function(e) {
 			e.preventDefault();
-			$('#noticeDetailModal').modal("hide");
-			$('#noticeUpdateModal').modal({
+			$('#faqDetailModal').modal("hide");
+			$('#faqUpdateModal').modal({
 		        show: true, 
 		        backdrop: 'static',
 		        keyboard: true
 		    });
         });
 		
-		// 공지사항 수정 저장
-		$("#noticeUpdateSaveButton").click(function(e) {
+		// FAQ 수정 저장
+		$("#faqUpdateSaveButton").click(function(e) {
 			e.preventDefault();
 			$.ajax({
-				url: "/admin/cc/notice/noticeUpdate",
+				url: "/admin/cc/faq/faqUpdate",
 				type: "POST",
-				data: $("#noticeUpdateForm").serialize(),
+				data: $("#faqUpdateForm").serialize(),
 				error: function() {
-					console.log("공지사항 수정 실패");
+					console.log("FAQ 수정 실패");
 				},
 				success: function(data) {
 					if (data.result == 'SUCCESS') {
-						alert("공지사항 수정에 성공하였습니다.");
+						alert("FAQ 수정에 성공하였습니다.");
 						self.location.reload(true);
 					} else {
-						alert("공지사항 수정에 실패하였습니다.");
+						alert("FAQ 수정에 실패하였습니다.");
 					}		
 				}
 			});
 			
 		});
 		
-		$("#noticeUpdateModalCloseButton").click(function(e) {
+		$("#faqUpdateModalCloseButton").click(function(e) {
 			e.preventDefault();
-			$('#noticeUpdateModal').modal("hide");
-			$('#noticeDetailModal').modal({
+			$('#faqUpdateModal').modal("hide");
+			$('#faqDetailModal').modal({
 		        show: true, 
 		        backdrop: 'static',
 		        keyboard: true
@@ -607,22 +538,22 @@
 		});
 		
 		// 상세보기 모달 --> 삭제 버튼 클릭
-		$("#noticeDeleteButton").click(function(e) {
+		$("#faqDeleteButton").click(function(e) {
 			e.preventDefault();
-			console.log($("#noticeNumber").val());
+			console.log($("#faqNumber").val());
 			$.ajax({
-				url: "/admin/cc/notice/noticeDelete",
+				url: "/admin/cc/faq/faqDelete",
 				type: "POST",
-				data: { noticeNumber: $("#noticeNumber").val()},
+				data: { faqNumber: $("#faqNumber").val()},
 				error: function() {
-					console.log("공지사항 삭제 실패");
+					console.log("FAQ 삭제 실패");
 				},
 				success: function(data) {
 					if (data.result == 'SUCCESS') {
-						alert("공지사항 삭제에 성공하였습니다.");
+						alert("FAQ 삭제에 성공하였습니다.");
 						self.location.reload(true);
 					} else {
-						alert("공지사항 삭제에 실패하였습니다.");
+						alert("FAQ 삭제에 실패하였습니다.");
 					}		
 				}
 			});
@@ -631,9 +562,9 @@
 		
 		
 		// 상세모달 닫기
-		$("#noticeDetailModalCloseButton").click(function(e) {
+		$("#faqDetailModalCloseButton").click(function(e) {
 			e.preventDefault();
-			$('#noticeDetailModal').modal("hide");
+			$('#faqDetailModal').modal("hide");
 		});
 		
 	});

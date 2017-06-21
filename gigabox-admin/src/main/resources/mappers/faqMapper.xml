@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.gigabox.admin.mapper.FaqMapper">
+	
+	<resultMap type="faq" id="faqResultMap">
+		<result property="faqNumber" column="FAQ_NUMBER" />
+		<result property="adminNumber" column="ADMIN_NUMBER" />
+		<result property="faqTitle" column="FAQ_TITLE" />
+		<result property="faqContent" column="FAQ_CONTENT" />
+		<result property="faqType" column="FAQ_TYPE" />
+	</resultMap>
+	
+	<select id="faqList" resultType="faq" resultMap="faqResultMap">
+		SELECT * 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+				SELECT FAQ_NUMBER, FAQ_TITLE, FAQ_CONTENT, FAQ_TYPE  
+				FROM TBL_FAQ 
+				WHERE 1 = 1
+				<if test="searchType == null or searchType == ''">
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'mileage'.toString()">
+					AND FAQ_TYPE = '마일리지' 
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'reservation'.toString()">
+					AND FAQ_TYPE = '영화예매'   
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'payment'.toString()">
+					AND FAQ_TYPE = '결제'    
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'cinema'.toString()">
+					AND FAQ_TYPE = '영화관'  
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'homepage'.toString()">
+					AND FAQ_TYPE = '홈페이지'    
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'etc'.toString()">
+					AND FAQ_TYPE = '기타'  
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				ORDER BY FAQ_NUMBER DESC    
+			) LIST 
+		) 
+		<where>
+			RNUM BETWEEN #{pageStart} AND #{pageEnd} 
+		</where>
+		
+	</select>
+	
+	<select id="faqListCount" resultType="int">
+		SELECT NVL(COUNT(1), 0) 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+				SELECT FAQ_NUMBER, FAQ_TITLE, FAQ_CONTENT, FAQ_TYPE  
+				FROM TBL_FAQ  
+				WHERE 1 = 1 
+				<if test="searchType == null or searchType == ''">
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'mileage'.toString()">
+					AND FAQ_TYPE = '마일리지' 
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'reservation'.toString()">
+					AND FAQ_TYPE = '영화예매'   
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'payment'.toString()">
+					AND FAQ_TYPE = '결제'    
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'cinema'.toString()">
+					AND FAQ_TYPE = '영화관'  
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'homepage'.toString()">
+					AND FAQ_TYPE = '홈페이지'    
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+				<if test="searchType == 'etc'.toString()">
+					AND FAQ_TYPE = '기타'  
+					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
+				</if>
+			) LIST 
+		)
+	</select>
+	
+	<select id="faqDetail" parameterType="int" resultType="faq" resultMap="faqResultMap">
+		SELECT FAQ_NUMBER, FAQ_TITLE, FAQ_CONTENT, FAQ_TYPE  
+		FROM TBL_FAQ 
+		WHERE FAQ_NUMBER = #{faqNumber} 
+	</select>
+	
+	<insert id="faqInsert" parameterType="faq">
+		<selectKey keyProperty="adminNumber" resultType="int" order="BEFORE">
+			SELECT ADMIN_NUMBER FROM TBL_ADMIN WHERE ADMIN_ID = 'admin' 
+		</selectKey>
+		INSERT INTO TBL_FAQ (
+		  FAQ_NUMBER, FAQ_TITLE, FAQ_CONTENT, FAQ_TYPE,  
+		  ADMIN_NUMBER ) 
+		VALUES (
+		  SEQ_FAQ.NEXTVAL, #{faqTitle}, #{faqContent}, 
+		  #{faqType}, #{adminNumber}  
+		  ) 
+	</insert>
+	
+	<update id="faqUpdate" parameterType="faq">
+		UPDATE TBL_FAQ 
+		SET 
+		  FAQ_TITLE = #{faqTitle}, FAQ_CONTENT = #{faqContent}, 
+		  FAQ_TYPE = #{faqType} 
+		WHERE FAQ_NUMBER = #{faqNumber}  
+	</update>
+	
+	<delete id="faqDelete" parameterType="faq">
+		DELETE FROM TBL_FAQ 
+		WHERE FAQ_NUMBER = #{faqNumber} 
+	</delete>
+	
+</mapper>
