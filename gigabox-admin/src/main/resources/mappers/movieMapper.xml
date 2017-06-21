@@ -31,17 +31,53 @@
 			SELECT LIST.*, ROWNUM AS RNUM 
 			FROM 
 			(
-				SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_CODE, MOVIE_STATUS, MOVIE_RELEASEDATE, MOVIE_GENRE  
+				SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_CODE, MOVIE_STATUS, 
+				MOVIE_RELEASEDATE, MOVIE_GENRE, MOVIE_RATING, MOVIE_DIRECTOR, MOVIE_CAST    
 				FROM TBL_MOVIE 
 				WHERE MOVIE_STATUS NOT IN('삭제') 
+				<if test="searchType == 'all'">
+					AND ( MOVIE_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR MOVIE_DIRECTOR LIKE '%' || #{searchKeyword} || '%' 
+					OR MOVIE_CAST LIKE '%' || #{searchKeyword} || '%' )
+				</if>
+				<if test="searchType == 'title'">
+					AND MOVIE_TITLE LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'director'">
+					AND MOVIE_DIRECTOR LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'cast'">
+					AND MOVIE_CAST LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="startYear != null and startYear != ''">
+					AND TO_NUMBER(SUBSTR(MOVIE_RELEASEDATE, 0, 4)) BETWEEN TO_NUMBER(#{startYear}) AND TO_NUMBER(#{endYear})  
+				</if>
+				<if test="genre != null and genre != ''">
+					AND ( 
+					<foreach collection="genreList" item="item" separator="OR">
+				            MOVIE_GENRE LIKE '%' || #{item} || '%' 
+				    </foreach>
+				    ) 
+				</if>
+				<if test="rating != null and rating != ''">
+					AND MOVIE_RATING IN 
+					(
+	        			WITH TT AS
+						    (
+						        SELECT #{rating} TXT FROM DUAL
+						    )
+					    SELECT TRIM(REGEXP_SUBSTR(TXT, '[^,]+', 1, LEVEL)) AS TXT 
+					        FROM TT
+					        CONNECT BY INSTR(TXT, ',', 1, LEVEL - 1) > 0
+					) 
+				</if>
 				ORDER BY MOVIE_RELEASEDATE DESC, MOVIE_TITLE ASC  
 			) LIST 
 		) 
 		<where>
-			<if test="pageStart != null and pageStart != ''">
-				RNUM BETWEEN #{pageStart} AND #{pageEnd} 
-			</if>
+			RNUM BETWEEN #{pageStart} AND #{pageEnd} 
 		</where>
+		
 	
 	</select>
 	
@@ -52,17 +88,50 @@
 			SELECT LIST.*, ROWNUM AS RNUM 
 			FROM 
 			(
-				SELECT MOVIE_NUMBER 
+				SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_CODE, MOVIE_STATUS, 
+				MOVIE_RELEASEDATE, MOVIE_GENRE, MOVIE_RATING, MOVIE_DIRECTOR, MOVIE_CAST    
 				FROM TBL_MOVIE 
 				WHERE MOVIE_STATUS NOT IN('삭제') 
+				<if test="searchType == 'all'">
+					AND ( MOVIE_TITLE LIKE '%' || #{searchKeyword} || '%' 
+					OR MOVIE_DIRECTOR LIKE '%' || #{searchKeyword} || '%' 
+					OR MOVIE_CAST LIKE '%' || #{searchKeyword} || '%' )
+				</if>
+				<if test="searchType == 'title'">
+					AND MOVIE_TITLE LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'director'">
+					AND MOVIE_DIRECTOR LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'cast'">
+					AND MOVIE_CAST LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="startYear != null and startYear != ''">
+					AND TO_NUMBER(SUBSTR(MOVIE_RELEASEDATE, 0, 4)) BETWEEN TO_NUMBER(#{startYear}) AND TO_NUMBER(#{endYear})  
+				</if>
+				<if test="genre != null and genre != ''">
+					AND ( 
+					<foreach collection="genreList" item="item" separator="OR">
+				            MOVIE_GENRE LIKE '%' || #{item} || '%' 
+				    </foreach>
+				    ) 
+				</if>
+				<if test="rating != null and rating != ''">
+					AND MOVIE_RATING IN 
+					(
+	        			WITH TT AS
+						    (
+						        SELECT #{rating} TXT FROM DUAL
+						    )
+					    SELECT TRIM(REGEXP_SUBSTR(TXT, '[^,]+', 1, LEVEL)) AS TXT 
+					        FROM TT
+					        CONNECT BY INSTR(TXT, ',', 1, LEVEL - 1) > 0
+					) 
+				</if>
 				ORDER BY MOVIE_RELEASEDATE DESC, MOVIE_TITLE ASC 
 			) LIST 
 		) 
-		<where>
-			<if test="pageStart != null and pageStart != ''">
-				RNUM BETWEEN #{pageStart} AND #{pageEnd} 
-			</if>
-		</where>
+
 		
 	</select>
 	

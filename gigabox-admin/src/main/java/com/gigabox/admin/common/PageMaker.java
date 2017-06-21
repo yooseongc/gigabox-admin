@@ -20,6 +20,7 @@ public class PageMaker {
 	
 	public void setCriteria(Criteria criteria) {
 		this.criteria = criteria;
+		
 	}
 	
 	public void setTotalCount(int totalCount) {

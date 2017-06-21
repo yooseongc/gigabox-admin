@@ -26,13 +26,13 @@
                             <a href="#"><i class="fa fa-question-circle fa-fw"></i> 고객센터 관리<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="/admin/notice/noticeMain">공지사항 관리</a>
+                                    <a href="/admin/cc/notice/noticeMain">공지사항 관리</a>
                                 </li>
                                 <li>
-                                    <a href="/admin/faq/faqMain">자주 묻는 질문 관리</a>
+                                    <a href="/admin/cc/faq/faqMain">자주 묻는 질문 관리</a>
                                 </li>
                                 <li>
-                                    <a href="/admin/qna/qnaMain">문의 게시판 관리</a>
+                                    <a href="/admin/cc/qna/qnaMain">문의 게시판 관리</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

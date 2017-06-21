@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.gigabox.admin.mapper.BranchMapper">
+	
+	<resultMap type="branch" id="branchResultMap">
+		<result property="branchNumber" column="BRANCH_NUMBER" />
+		<result property="branchName" column="BRANCH_NAME" />
+		<result property="branchAddress" column="BRANCH_ADDRESS" />
+		<result property="branchPicture" column="BRANCH_PICTURE" />
+	</resultMap>
+	
+	<select id="branchListAll" resultType="branch" resultMap="branchResultMap">
+		SELECT * 
+		FROM TBL_BRANCH 
+	</select>
+	
+</mapper>

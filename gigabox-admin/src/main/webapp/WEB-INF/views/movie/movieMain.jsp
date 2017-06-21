@@ -250,9 +250,6 @@ td {
                                         </div>
                                         <div class="checkbox">
                                             <label class="checkbox-inline">
-                                                <input type="checkbox" name="genre" value="어드벤처">어드벤처
-                                            </label>
-                                            <label class="checkbox-inline">
                                                 <input type="checkbox" name="genre" value="SF">SF
                                             </label>
                                             <label class="checkbox-inline">
@@ -273,7 +270,7 @@ td {
                                                 <input type="checkbox" name="genre" value="사극">사극
                                             </label>
                                             <label class="checkbox-inline">
-                                                <input type="checkbox" name="genre" value="어드벤처">어드벤쳐
+                                                <input type="checkbox" name="genre" value="어드벤처">어드벤처
                                             </label>
                                             <label class="checkbox-inline">
                                                 <input type="checkbox" name="genre" value="퀴어">퀴어
@@ -379,6 +376,92 @@ td {
                 </div>
                 <!-- /.col-lg-12 -->
 
+	<script>
+	$(document).ready(function() {
+		
+		var query = window.location.search.substring(1);
+		var decode = decodeURIComponent(query);
+		var genreArray = new Array();
+		var ratingArray = new Array();
+		var queryArray = decode.split("&");
+		for (var i = 0; i < queryArray.length; i++) {
+			if (queryArray[i].indexOf("genre=") != -1) {
+				genreArray.push(queryArray[i].substring(6));
+			}
+		}
+		for (var i = 0; i < genreArray.length; i++) {
+			if ($("input[name=genre][value='"+genreArray[i]+"']:not(:checked)").prop("checked", false)) {
+				$("input[name=genre][value='"+genreArray[i]+"']").prop("checked", true);
+			}
+		}
+		for (var i = 0; i < queryArray.length; i++) {
+			if (queryArray[i].indexOf("rating=") != -1) {
+				ratingArray.push(queryArray[i].substring(7));
+			}
+		}
+		for (var i = 0; i < ratingArray.length; i++) {
+			if ($("input[name=rating][value='"+ratingArray[i]+"']:not(:checked)").prop("checked", false)) {
+				$("input[name=rating][value='"+ratingArray[i]+"']").prop("checked", true);
+			}
+		}
+		
+		
+		
+		if ('${param.searchType}' != '') {
+			$("#searchType").val('${param.searchType}');
+		}
+		if ('${param.searchKeyword}' != '') {
+			$("#searchKeyword").val('${param.searchKeyword}');
+		}
+		if ('${param.startYear}' != '') {
+			$("#startYear").val('${param.startYear}');
+		}
+		if ('${param.endYear}' != '') {
+			$("#endYear").val('${param.endYear}');
+		}
+	
+		$('#all').on("click", function() {
+			if ($(this).prop("checked") == true) {
+                $("input[name=genre]").prop("checked", true);
+            } else {
+                $("input[name=genre]").prop("checked", false);
+            }
+		});
+		$('input[name=genre]').on("change", function() {
+			
+			if ($("#all").prop("checked") == true) {
+				if ($("input[name=genre]:not(:checked)").length != 0) {
+					$("#all").prop("checked", false);
+				}
+			}
+		});
+			
+		$('#movieSearchButton').on("click",	function(event) {
+			event.preventDefault();
+			var queryString = "/admin/movie/movieMain"
+				+ '${pageMaker.makeQuery(1)}'
+				+ "&searchType="
+				+ $("#searchType").val()
+				+ "&searchKeyword=" + $('#searchKeyword').val()
+				+ "&startYear=" + $('#startYear').val()
+				+ "&endYear=" + $("#endYear").val();
+			
+			$("#movieSearchForm input[name=rating]:checked").each(function() {
+				queryString += "&rating=" + $(this).val();
+			});
+			if ($("#all").attr("checked") == true) {
+				
+			} else {
+				$("#movieSearchForm input[name=genre]:checked").each(function() {
+					queryString += "&genre=" + $(this).val();
+				});
+			}
+			self.location = queryString;
+		});
+
+	});
+</script>			
+
                 <div class="col-lg-12">
                 <article id="admin_movie_table_article">
                     <div class="panel panel-default">
@@ -421,6 +504,29 @@ td {
                             <!-- /.table-responsive -->
                         </div>
                         <!-- /.panel-body -->
+                        <div class="panel-footer">
+                        	<div class="text-center">
+						<ul class="pagination">
+
+							<c:if test="${pageMaker.prev}">
+								<li><a href="/admin/movie/movieMain${pageMaker.makeQuery(pageMaker.startPage-1)}">&laquo;</a></li>
+							</c:if>
+
+							<c:forEach begin="${pageMaker.startPage}"
+								end="${pageMaker.endPage}" var="idx">
+								<li 
+									<c:out value="${pageMaker.criteria.page == idx?'class=\"active\"':''}"/>>
+									<a href="/admin/movie/movieMain${pageMaker.makeQuery(idx)}">${idx}</a>
+								</li>
+							</c:forEach>
+
+							<c:if test="${pageMaker.next && pageMaker.endPage > 0}">
+								<li><a href="/admin/movie/movieMain${pageMaker.makeQuery(pageMaker.endPage+1)}">&raquo;</a></li>
+							</c:if>
+
+						</ul>
+					</div>
+                        </div>
                     </div>
                     <!-- /.panel -->
                 </article>
@@ -1118,7 +1224,8 @@ td {
 			var table = $('#movieListTable').DataTable({
 				"responsive" : true,
 				"paging":   false,
-				"searching": false
+				"searching": false,
+				"info": false
 			});
 			
 			
@@ -1581,14 +1688,16 @@ td {
 							success: function(data) {
 								console.log(data);
 								var fileList = data.fileList;
-								posterTBody.append("<tr>");
+								
 								for (var i = 0; i < fileList.length; i++) {
 									var dataName = fileList[i];
 									var dataSrc = "http://choiys3574.cafe24.com" + data.rootPath + dataName;
+									posterTBody.append("<tr>");
 									posterTBody.append("<td>"+fileList[i]+"</td>");
 									posterTBody.append("<td><button class='btn btn-sm btn-warning' onclick='openImageModal(this)' data-src='"+dataSrc+"' data-name='"+dataName+"'>보기</button></td>");
+									posterTBody.append("</tr>");
 								}
-								posterTBody.append("</tr>");
+								
 							} 
 						});
 						// 스틸컷 목록 불러오기
@@ -1611,12 +1720,14 @@ td {
 							success: function(data) {
 								console.log(data);
 								var fileList = data.fileList;
-								steelcutTBody.append("<tr>");
+								
 								for (var i = 0; i < fileList.length; i++) {
 									var dataName = fileList[i];
 									var dataSrc = "http://choiys3574.cafe24.com" + data.rootPath + dataName;
+									steelcutTBody.append("<tr>");
 									steelcutTBody.append("<td>"+fileList[i]+"</td>");
 									steelcutTBody.append("<td><button class='btn btn-sm btn-warning' onclick='openImageModal(this)' data-src='"+dataSrc+"' data-name='"+dataName+"'>보기</button></td>");
+									steelcutTBody.append("<tr>");
 								}
 								posterTBody.append("</tr>");
 							} 
@@ -1641,14 +1752,16 @@ td {
 							success: function(data) {
 								console.log(data);
 								var fileList = data.fileList;
-								trailerTBody.append("<tr>");
+								
 								for (var i = 0; i < fileList.length; i++) {
 									var dataName = fileList[i];
 									var dataSrc = "http://choiys3574.cafe24.com" + data.rootPath + dataName;
+									trailerTBody.append("<tr>");
 									trailerTBody.append("<td>"+fileList[i]+"</td>");
 									trailerTBody.append("<td><button class='btn btn-sm btn-warning' onclick='openVideoModal(this)' data-src='"+dataSrc+"'>보기</button></td>");
+									trailerTBody.append("</tr>");
 								}
-								trailerTBody.append("</tr>");
+								
 							} 
 						});
 					}
@@ -1707,23 +1820,25 @@ td {
 			
 			// 영화 정보 삭제
 			$("#movieDeleteButton").click(function() {
-				var dataId = $("div[data-id=movieNumber]").text();
-				console.log(dataId);
-				$.ajax({
-					url: "/admin/movie/movieDelete",
-					type: "POST",
-					data: {
-						movieNumber: dataId
-					},
-					error: function() {
-						alert("시스템 오류입니다.");
-					},
-					success: function(data) {
-						alert("삭제되었습니다.");
-						$("#movieDetailModalCloseButton").trigger("click");
-						self.location.reload(true);
-					}
-				});
+				if (confirm("정말 삭제하시겠습니까?")) {
+					var dataId = $("div[data-id=movieNumber]").text();
+					console.log(dataId);
+					$.ajax({
+						url: "/admin/movie/movieDelete",
+						type: "POST",
+						data: {
+							movieNumber: dataId
+						},
+						error: function() {
+							alert("시스템 오류입니다.");
+						},
+						success: function(data) {
+							alert("삭제되었습니다.");
+							$("#movieDetailModalCloseButton").trigger("click");
+							self.location.reload(true);
+						}
+					});
+				}
 			});
 
 		});
@@ -1854,7 +1969,7 @@ td {
 		        replaceFileInput: false,
 		        formData: {
 		        	fileName: $("#movieCode").val(),
-		        	fileDir: "http://choiys3574.cafe24.com/upload/gigabox/movie/steelcut/" + $("#movieCode").val(),
+		        	fileDir: "upload/gigabox/movie/steelcut/" + $("#movieCode").val(),
 		        	purpose: "steelcut",
 		        	fileType: fileTypeStr
 		        },
@@ -1863,7 +1978,7 @@ td {
 		            var result = data.result;
 		            var dataSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/steelcut/" + $("#movieCode").val() + "/" + result.fileName + "." + result.fileType;
 	                var dataName = result.fileName + "." + result.fileType;
-	                var deleteSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/poster/" + $("#movieCode").val() + "/" + result.fileName + "." + result.fileType + "/delete";
+	                var deleteSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/steelcut/" + $("#movieCode").val() + "/" + result.fileName + "." + result.fileType + "/delete";
 		            $("#uploadedSteelcutFile").append(
 	                        $('<tr/>')
 	                        .append($('<td/>').text(result.fileName + "." + result.fileType))

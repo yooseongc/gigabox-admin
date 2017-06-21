@@ -18,6 +18,8 @@ public class MovieSearchCriteria extends Criteria {
 	private String rating;
 	private String startYear;
 	private String endYear;
+	private List<String> genreList;
+	private List<String> ratingList;
 	
 	public void checkYear() {
 		if (startYear == null || "".equals(startYear)) {
@@ -33,10 +35,10 @@ public class MovieSearchCriteria extends Criteria {
 		}
 	}
 	
-	public String makeQuery() {
+	public String makeQuery(int page) {
 		UriComponents uriComponents = 
 			UriComponentsBuilder.newInstance()
-				.queryParam("page", this.page)
+				.queryParam("page", page)
 				.queryParam("perPageNum", this.perPageNum)
 				.queryParam("searchType", searchType)
 				.queryParam("searchKeyword", encoding(searchKeyword))
@@ -101,6 +103,22 @@ public class MovieSearchCriteria extends Criteria {
 	public String toString() {
 		return super.toString() + " MovieSearchCriteria [searchType=" + searchType + ", searchKeyword=" + searchKeyword + ", genre=" + genre
 				+ ", rating=" + rating + ", startYear=" + startYear + ", endYear=" + endYear + "]";
+	}
+
+	public List<String> getGenreList() {
+		return genreList;
+	}
+
+	public void setGenreList(List<String> genreList) {
+		this.genreList = genreList;
+	}
+
+	public List<String> getRatingList() {
+		return ratingList;
+	}
+
+	public void setRatingList(List<String> ratingList) {
+		this.ratingList = ratingList;
 	}
 	
 	

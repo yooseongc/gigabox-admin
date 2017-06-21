@@ -29,6 +29,15 @@
 	<logger name="com.gigabox.admin.movie.controller">
 		<level value="info" />
 	</logger>
+	<logger name="com.gigabox.admin.user.controller">
+		<level value="info" />
+	</logger>
+	<logger name="com.gigabox.admin.mail">
+		<level value="info" />
+	</logger>
+	<logger name="com.gigabox.admin.cc.controller">
+		<level value="info" />
+	</logger>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
@@ -53,6 +62,13 @@
 	</logger>
 	<logger name="java.resultsettable" additivity="false">
 		<level value="DEBUG"/>
+	</logger>
+	
+	<!-- log4jdbc option  log the jdbc results as a table --> 
+
+	<logger name="jdbc.sqltiming" additivity="false"> 
+		<level value="debug" /> 
+		<appender-ref ref="console" /> 
 	</logger>
 
 	<!-- Root Logger -->

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.gigabox.admin.mapper.UserMapper">
+	
+	<resultMap type="user" id="userResultMap">
+		<result property="userNumber" column="USER_NUMBER" />
+		<result property="userId" column="USER_ID" />
+		<result property="userPw" column="USER_PW" />
+		<result property="userName" column="USER_NAME" />
+		<result property="userGender" column="USER_GENDER" />
+		<result property="userBirthday" column="USER_BIRTHDAY" />
+		<result property="userEmail" column="USER_EMAIL" />
+		<result property="userTel" column="USER_TEL" />
+		<result property="userAddr" column="USER_ADDR" />
+		<result property="userReg" column="USER_REGISTERDATE" />
+		<result property="userAgree" column="USER_AGREE" />
+		<result property="userMileage" column="USER_MILEAGE" />
+		<result property="userJoinAuth" column="USER_JOINAUTH"/>
+		<result property="userStatus" column="USER_STATUS"/>
+	</resultMap>
+	
+	<select id="userList" resultType="user" resultMap="userResultMap">
+		SELECT * 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+				SELECT USER_NUMBER, USER_ID, USER_NAME, USER_GENDER, USER_BIRTHDAY, USER_EMAIL, 
+				USER_TEL, USER_ADDR, USER_REGISTERDATE, USER_AGREE, USER_MILEAGE, USER_JOINAUTH, USER_STATUS 
+				FROM TBL_USER 
+				WHERE USER_AGREE = 'Y' 
+				
+				<if test="searchType == 'all'">
+					AND (USER_ID LIKE '%' || #{searchKeyword} || '%' 
+					OR USER_NAME LIKE '%' || #{searchKeyword} || '%' 
+					OR USER_EMAIL LIKE '%' || #{searchKeyword} || '%' )
+				</if>
+				<if test="searchType == 'id'">
+					AND USER_ID LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'name'">
+					AND USER_NAME LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'email'">
+					AND USER_EMAIL LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchStatus == null or searchStatus == ''">
+					AND USER_STATUS = '정상가입' 
+				</if>
+				<if test="searchStatus == '가입대기'">
+					AND USER_STATUS = #{searchStatus} 
+				</if>
+				<if test="searchStatus == '정상가입'">
+					AND USER_STATUS = #{searchStatus} 
+				</if>
+				<if test="searchStatus == '회원탈퇴'">
+					AND USER_STATUS = #{searchStatus} 
+				</if>
+				<if test="searchStatus == '블라인드'">
+					AND USER_STATUS = #{searchStatus} 
+				</if>
+				<if test="startDate != null and startDate != ''">
+					<![CDATA[
+					AND USER_REGISTERDATE >= 
+					]]>
+					TO_DATE(#{startDate}, 'YYYY-MM-DD')   
+				</if> 
+				<if test="endDate != null and endDate != ''">
+					<![CDATA[
+					AND USER_REGISTERDATE <= 
+					]]>
+					TO_DATE(#{endDate}, 'YYYY-MM-DD')  
+				</if> 
+				
+				ORDER BY USER_REGISTERDATE DESC, USER_NAME ASC  
+			) LIST 
+		) 
+		<where>
+			RNUM BETWEEN #{pageStart} AND #{pageEnd} 
+		</where>
+		
+	</select>
+	
+	<select id="userListCount" resultType="int">
+		SELECT NVL(COUNT(1), 0) 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+				SELECT USER_NUMBER, USER_ID, USER_NAME, USER_GENDER, USER_BIRTHDAY, USER_EMAIL, 
+				USER_TEL, USER_ADDR, USER_REGISTERDATE, USER_AGREE, USER_MILEAGE, USER_JOINAUTH, USER_STATUS 
+				FROM TBL_USER 
+				WHERE USER_AGREE = 'Y' 
+				
+				<if test="searchType == 'all'">
+					AND (USER_ID LIKE '%' || #{searchKeyword} || '%' 
+					OR USER_NAME LIKE '%' || #{searchKeyword} || '%' 
+					OR USER_EMAIL LIKE '%' || #{searchKeyword} || '%' )
+				</if>
+				<if test="searchType == 'id'">
+					AND USER_ID LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'name'">
+					AND USER_NAME LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'email'">
+					AND USER_EMAIL LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchStatus == null or searchStatus == ''">
+					AND USER_STATUS = '정상가입' 
+				</if>
+				<if test="searchStatus == '가입대기'">
+					AND USER_STATUS = #{searchStatus} 
+				</if>
+				<if test="searchStatus == '정상가입'">
+					AND USER_STATUS = #{searchStatus} 
+				</if>
+				<if test="searchStatus == '회원탈퇴'">
+					AND USER_STATUS = #{searchStatus} 
+				</if>
+				<if test="searchStatus == '블라인드'">
+					AND USER_STATUS = #{searchStatus} 
+				</if>
+				<if test="startDate != null and startDate != ''">
+					<![CDATA[
+					AND USER_REGISTERDATE >= 
+					]]>
+					TO_DATE(#{startDate}, 'YYYY-MM-DD')   
+				</if> 
+				<if test="endDate != null and endDate != ''">
+					<![CDATA[
+					AND USER_REGISTERDATE <= 
+					]]>
+					TO_DATE(#{endDate}, 'YYYY-MM-DD')  
+				</if> 
+				
+				ORDER BY USER_REGISTERDATE DESC, USER_NAME ASC  
+			) LIST 
+		) 
+	</select>
+	
+	<select id="userDetail" parameterType="int" resultType="user" resultMap="userResultMap">
+		SELECT * 
+		FROM TBL_USER 
+		WHERE USER_NUMBER = #{userNumber} 
+	</select>
+	
+	<update id="userUpdate" parameterType="user">
+		UPDATE TBL_USER 
+		SET 
+		    USER_NAME = #{userName}, USER_GENDER = #{userGender}, 
+		    USER_BIRTHDAY = #{userBirthday}, USER_EMAIL = #{userEmail}, 
+				USER_TEL = #{userTel}, USER_ADDR = #{userAddr}, 
+				USER_MILEAGE = #{userMileage}, USER_STATUS = #{userStatus}  
+		WHERE USER_NUMBER = #{userNumber} 
+	</update>
+	
+	<insert id="movieInsert" parameterType="movie">
+		<selectKey keyProperty="movieNumber" resultType="int" order="BEFORE">
+			SELECT SEQ_MOVIE.NEXTVAL FROM DUAL 
+		</selectKey>
+		INSERT INTO TBL_MOVIE (
+		  MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_RATING, MOVIE_RELEASEDATE, 
+		  MOVIE_DIRECTOR, MOVIE_CAST, MOVIE_SCREENTIME, MOVIE_GENRE, 
+		  MOVIE_STORYLINE, MOVIE_ENGNAME, MOVIE_POSTER, MOVIE_STEELCUT, 
+		  MOVIE_TRAILER, MOVIE_CODE, MOVIE_STATUS ) 
+		VALUES (
+		  #{movieNumber}, #{movieTitle}, #{movieType}, #{movieRating}, #{movieReleasedate},
+		  #{movieDirector}, #{movieCast}, #{movieScreentime}, #{movieGenre},
+		  #{movieStoryline}, #{movieEngname}, #{moviePoster}, #{movieSteelcut},
+		  #{movieTrailer}, #{movieCode}, #{movieStatus} 
+		  ) 
+	</insert>
+	
+	<update id="movieUpdate" parameterType="movie">
+		UPDATE TBL_MOVIE 
+		SET 
+		  MOVIE_TITLE = #{movieTitle}, MOVIE_TYPE = #{movieType}, MOVIE_RATING = #{movieRating}, MOVIE_RELEASEDATE = #{movieReleasedate}, 
+		  MOVIE_DIRECTOR = #{movieDirector}, MOVIE_CAST = #{movieCast}, MOVIE_SCREENTIME = #{movieScreentime}, 
+		  MOVIE_GENRE = #{movieGenre}, MOVIE_STORYLINE = #{movieStoryline}, MOVIE_ENGNAME = #{movieEngname}, 
+		  MOVIE_STATUS = #{movieStatus}
+		WHERE MOVIE_NUMBER = #{movieNumber} 
+	</update>
+	
+	<update id="movieDelete" parameterType="movie">
+		UPDATE TBL_MOVIE 
+		SET MOVIE_STATUS = '삭제'  
+		WHERE MOVIE_NUMBER = #{movieNumber} 
+	</update>
+	
+</mapper>

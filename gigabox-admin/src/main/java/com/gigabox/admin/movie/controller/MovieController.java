@@ -1,7 +1,9 @@
 package com.gigabox.admin.movie.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -39,9 +41,36 @@ public class MovieController {
 		logger.info("=======================================================");
 		logger.info("MOVIE MAIN PAGE LOADING...");
 		logger.info("INITIAL PAGING= " + msc.toString());
+		msc.checkYear();
+		logger.info("CHECK YEAR RESULT= " + msc.toString());
+		
+		// 장르 처리
+		String genreFullStr = msc.getGenre();
+		if (genreFullStr != null && !genreFullStr.equals("")) {
+			String[] genreArray = genreFullStr.replaceAll(" ", "").split(",");
+			List<String> genreList = new ArrayList<>();
+			for (String genre : genreArray) {
+				genreList.add(genre);
+				logger.info(genre);
+			}
+			msc.setGenreList(genreList);
+		}
+		
+		// 관람가 처리
+		/*String ratingFullStr = msc.getRating();
+		if (ratingFullStr != null && !ratingFullStr.equals("")) {
+			String[] ratingArray = ratingFullStr.replaceAll(" ", "").split(",");
+			List<String> ratingList = new ArrayList<>();
+			for (String rating : ratingArray) {
+				ratingList.add(rating);
+				logger.info(rating);
+			}
+			msc.setRatingList(ratingList);
+		}*/
 		
 		model.addAttribute("movieList", movieService.movieList(msc));
-		logger.info(movieService.movieList(msc).toString());
+		//logger.info(movieService.movieList(msc).toString());
+		
 		
 		PageMaker pageMaker = new PageMaker();
 		pageMaker.setCriteria(msc);

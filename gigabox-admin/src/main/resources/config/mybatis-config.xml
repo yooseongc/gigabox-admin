@@ -7,6 +7,9 @@
 	<typeAliases>
 		<typeAlias type="com.gigabox.admin.admin.vo.AdminVO" alias="admin"/>
 		<typeAlias type="com.gigabox.admin.movie.vo.MovieVO" alias="movie"/>
+		<typeAlias type="com.gigabox.admin.user.vo.UserVO" alias="user"/>
+		<typeAlias type="com.gigabox.admin.cinema.vo.BranchVO" alias="branch"/>
+		<typeAlias type="com.gigabox.admin.cc.vo.NoticeVO" alias="notice"/>
 	</typeAliases>
 	
 </configuration>

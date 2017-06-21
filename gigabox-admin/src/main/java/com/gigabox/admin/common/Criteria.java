@@ -4,6 +4,7 @@ public class Criteria {
 	
 	protected int page;
 	protected int perPageNum;
+
 	
 	public Criteria() {
 		this.page = 1;
@@ -37,17 +38,19 @@ public class Criteria {
 	
 	// For Mapper
 	public int getPageStart() {
-		return (this.page - 1) * perPageNum;
+		return (this.page - 1) * perPageNum + 1;
 	}
 	
 	// For Mapper
 	public int getPageEnd() {
 		return this.page * perPageNum;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Creteria [page=" + page + ", perPageNum=" + perPageNum + "]";
+		return "Criteria [page=" + page + ", perPageNum=" + perPageNum + ", getPageStart()=" + getPageStart()
+				+ ", getPageEnd()=" + getPageEnd() + "]";
 	}
+	
 	
 }
