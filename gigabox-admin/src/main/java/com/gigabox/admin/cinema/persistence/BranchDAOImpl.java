@@ -18,8 +18,8 @@ public class BranchDAOImpl implements BranchDAO {
 	private final static String namespace = "com.gigabox.admin.mapper.BranchMapper";
 	
 	@Override
-	public List<BranchVO> branchListAll(BranchVO branchVO) {
-		return sqlSession.selectList(namespace + ".branchListAll", branchVO);
+	public List<BranchVO> branchListAll() {
+		return sqlSession.selectList(namespace + ".branchListAll");
 	}
 
 }

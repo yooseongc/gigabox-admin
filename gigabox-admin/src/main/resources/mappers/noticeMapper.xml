@@ -25,17 +25,17 @@
 				NOTICE_BRANCHNAME, NOTICE_STATUS 
 				FROM TBL_NOTICE 
 				WHERE 1 = 1
-				<if test="searchType == 't'">
+				<if test="searchType == 't'.toString()">
 					AND NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%' 
 				</if>
-				<if test="searchType == 'c'">
+				<if test="searchType == 'c'.toString()">
 					AND NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%' 
 				</if>
-				<if test="searchType == 'tc'">
+				<if test="searchType == 'tc'.toString()">
 					AND (NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%'
 						OR NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%' )  
 				</if>
-				<if test="searchType == 'b'">
+				<if test="searchType == 'b'.toString()">
 					AND NOTICE_BRANCHNAME LIKE '%' || #{searchKeyword} || '%' 
 				</if>
 				
@@ -58,18 +58,18 @@
 				SELECT NOTICE_NUMBER, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_REGISTERDATE, 
 					NOTICE_BRANCHNAME, NOTICE_STATUS
 					FROM TBL_NOTICE  
-					WHERE 1 = 1
-					<if test="searchType == 't'">
+					WHERE 1 = 1 
+					<if test="searchType == 't'.toString()">
 						AND NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%' 
 					</if>
-					<if test="searchType == 'c'">
+					<if test="searchType == 'c'.toString()">
 						AND NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%' 
 					</if>
-					<if test="searchType == 'tc'">
+					<if test="searchType == 'tc'.toString()">
 						AND (NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%'
 							OR NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%' )  
 					</if>
-					<if test="searchType == 'b'">
+					<if test="searchType == 'b'.toString()">
 						AND NOTICE_BRANCHNAME LIKE '%' || #{searchKeyword} || '%' 
 					</if>
 			) LIST 

@@ -24,6 +24,13 @@ public class NoticeSearchCriteria extends Criteria {
 		return uriComponents.toString();
 	}
 	
+	@Override
+	public String toString() {
+		return "NoticeSearchCriteria [searchType=" + searchType + ", searchKeyword=" + searchKeyword + ", page=" + page
+				+ ", perPageNum=" + perPageNum + ", getPageStart()=" + getPageStart() + ", getPageEnd()=" + getPageEnd()
+				+ "]";
+	}
+
 	private String encoding(String keyword) {
 		if (keyword == null || keyword.trim().length() == 0) {
 			return "";

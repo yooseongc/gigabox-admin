@@ -6,7 +6,7 @@ import com.gigabox.admin.cinema.vo.BranchVO;
 
 public interface BranchDAO {
 
-	public List<BranchVO> branchListAll(BranchVO branchVO);
+	public List<BranchVO> branchListAll();
 	
 	
 	
