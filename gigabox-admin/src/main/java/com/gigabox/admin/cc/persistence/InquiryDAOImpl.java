@@ -5,51 +5,52 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.stereotype.Repository;
 
 import com.gigabox.admin.cc.vo.InquirySearchCriteria;
 import com.gigabox.admin.cc.vo.InquiryVO;
 
+@Repository
 public class InquiryDAOImpl implements InquiryDAO {
 
 	@Inject
 	private SqlSession sqlSession;
 	
-	private final static String mapper = "com.gigabox.admin.mapper.InquiryMapper";
+	private final static String namespace = "com.gigabox.admin.mapper.InquiryMapper";
 	
 	@Override
 	public List<InquiryVO> inquiryList(InquirySearchCriteria isc) {
-		// TODO Auto-generated method stub
-		return null;
+		return sqlSession.selectList(namespace + ".inquiryList", isc);
 	}
 
 	@Override
 	public int inquiryListCount(InquirySearchCriteria isc) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sqlSession.selectOne(namespace + ".inquiryListCount", isc);
 	}
 
 	@Override
-	public InquiryVO inquiryDetail(InquiryVO inquiryVO) {
-		// TODO Auto-generated method stub
-		return null;
+	public InquiryVO inquiryDetailQ(InquiryVO inquiryVO) {
+		return sqlSession.selectOne(namespace + ".inquiryDetailQ", inquiryVO);
 	}
 
 	@Override
-	public int inquiryInsert(InquiryVO inquiryVO) {
-		// TODO Auto-generated method stub
-		return 0;
+	public InquiryVO inquiryDetailA(InquiryVO inquiryVO) {
+		return sqlSession.selectOne(namespace + ".inquiryDetailA", inquiryVO);
 	}
 
 	@Override
-	public int inquiryUpdate(InquiryVO inquiryVO) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int inquiryInsertA(InquiryVO inquiryVO) {
+		return sqlSession.insert(namespace + ".inquiryInsertA", inquiryVO);
 	}
 
 	@Override
-	public int inquiryDelete(InquiryVO inquiryVO) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int inquiryUpdateA(InquiryVO inquiryVO) {
+		return sqlSession.update(namespace + ".inquiryUpdateA", inquiryVO);
+	}
+
+	@Override
+	public int inquiryDeleteA(InquiryVO inquiryVO) {
+		return sqlSession.delete(namespace + ".inquiryDeleteA", inquiryVO);
 	}
 
 }

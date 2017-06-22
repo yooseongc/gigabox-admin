@@ -25,7 +25,22 @@
 				SELECT INQUIRY_NUMBER, USER_NUMBER, INQUIRY_TITLE, INQUIRY_CONTENT, INQUIRY_REGISTERDATE, 
 				 	INQUIRY_GROUPNUMBER, INQUIRY_QORA 
 				FROM TBL_INQUIRY 
-				WHERE INQUIRY_QORA = 'Q' 
+				WHERE INQUIRY_QORA = 'Q'  
+				
+				<!-- 답변 미완료 -->
+				<if test="inquiryType == 'Q'.toString()">
+					AND INQUIRY_GROUPNUMBER IN ( SELECT INQUIRY_GROUPNUMBER AS TEMP_GROUPNUMBER
+						  FROM TBL_INQUIRY 
+						  GROUP BY INQUIRY_GROUPNUMBER 
+						  HAVING COUNT(INQUIRY_GROUPNUMBER) = 1 ) 
+				</if>
+				<!-- 답변 완료 -->
+				<if test="inquiryType == 'A'.toString()">
+					AND INQUIRY_GROUPNUMBER IN ( SELECT INQUIRY_GROUPNUMBER AS TEMP_GROUPNUMBER
+						  FROM TBL_INQUIRY 
+						  GROUP BY INQUIRY_GROUPNUMBER 
+						  HAVING COUNT(INQUIRY_GROUPNUMBER) = 2 ) 
+				</if>
 				<if test="searchType == 't'.toString()">
 					AND INQUIRY_TITLE LIKE '%' || #{searchKeyword} || '%' 
 				</if>
@@ -46,65 +61,80 @@
 		
 	</select>
 	
-	<select id="noticeListCount" resultType="int">
+	<select id="inquiryListCount" resultType="int">
 		SELECT NVL(COUNT(1), 0) 
 		FROM 
 		(
 			SELECT LIST.*, ROWNUM AS RNUM 
 			FROM 
 			(
-				SELECT NOTICE_NUMBER, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_REGISTERDATE, 
-					NOTICE_BRANCHNAME, NOTICE_STATUS
-					FROM TBL_NOTICE  
-					WHERE 1 = 1 
-					<if test="searchType == 't'.toString()">
-						AND NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					</if>
-					<if test="searchType == 'c'.toString()">
-						AND NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%' 
-					</if>
-					<if test="searchType == 'tc'.toString()">
-						AND (NOTICE_TITLE LIKE '%' || #{searchKeyword} || '%'
-							OR NOTICE_CONTENT LIKE '%' || #{searchKeyword} || '%' )  
-					</if>
-					<if test="searchType == 'b'.toString()">
-						AND NOTICE_BRANCHNAME LIKE '%' || #{searchKeyword} || '%' 
-					</if>
+				SELECT INQUIRY_NUMBER, USER_NUMBER, INQUIRY_TITLE, INQUIRY_CONTENT, INQUIRY_REGISTERDATE, 
+				 	INQUIRY_GROUPNUMBER, INQUIRY_QORA 
+				FROM TBL_INQUIRY
+				
+				WHERE INQUIRY_QORA = 'Q'  
+				
+				<!-- 답변 미완료 -->
+				<if test="inquiryType == 'Q'.toString()">
+					AND INQUIRY_GROUPNUMBER IN ( SELECT INQUIRY_GROUPNUMBER AS TEMP_GROUPNUMBER
+						  FROM TBL_INQUIRY 
+						  GROUP BY INQUIRY_GROUPNUMBER 
+						  HAVING COUNT(INQUIRY_GROUPNUMBER) = 1 ) 
+				</if>
+				<!-- 답변 완료 -->
+				<if test="inquiryType == 'A'.toString()">
+					AND INQUIRY_GROUPNUMBER IN ( SELECT INQUIRY_GROUPNUMBER AS TEMP_GROUPNUMBER
+						  FROM TBL_INQUIRY 
+						  GROUP BY INQUIRY_GROUPNUMBER 
+						  HAVING COUNT(INQUIRY_GROUPNUMBER) = 2 ) 
+				</if>
+				<if test="searchType == 't'.toString()">
+					AND INQUIRY_TITLE LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'c'.toString()">
+					AND INQUIRY_CONTENT LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'tc'.toString()">
+					AND (INQUIRY_TITLE LIKE '%' || #{searchKeyword} || '%'
+						OR INQUIRY_CONTENT LIKE '%' || #{searchKeyword} || '%' )  
+				</if>
 			) LIST 
 		)
 	</select>
 	
-	<select id="noticeDetail" parameterType="int" resultType="notice" resultMap="noticeResultMap">
-		SELECT NOTICE_NUMBER, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_REGISTERDATE, 
-		NOTICE_BRANCHNAME, NOTICE_STATUS 
-		FROM TBL_NOTICE 
-		WHERE NOTICE_NUMBER = #{noticeNumber} 
+	<select id="inquiryDetailQ" parameterType="int" resultType="inquiry" resultMap="inquiryResultMap">
+		SELECT INQUIRY_NUMBER, USER_NUMBER, INQUIRY_TITLE, INQUIRY_CONTENT, INQUIRY_REGISTERDATE,
+			INQUIRY_GROUPNUMBER, INQUIRY_QORA 
+		FROM TBL_INQUIRY 
+		WHERE INQUIRY_NUMBER = #{inquiryNumber} AND INQUIRY_QORA = 'Q' 
 	</select>
 	
-	<insert id="noticeInsert" parameterType="notice">
-		<selectKey keyProperty="adminNumber" resultType="int" order="BEFORE">
-			SELECT ADMIN_NUMBER FROM TBL_ADMIN WHERE ADMIN_ID = 'admin' 
-		</selectKey>
-		INSERT INTO TBL_NOTICE (
-		  NOTICE_NUMBER, NOTICE_TITLE, NOTICE_CONTENT, NOTICE_REGISTERDATE, 
-		NOTICE_BRANCHNAME, NOTICE_STATUS, ADMIN_NUMBER ) 
+	<select id="inquiryDetailA" parameterType="int" resultType="inquiry" resultMap="inquiryResultMap">
+		SELECT INQUIRY_NUMBER, INQUIRY_TITLE, INQUIRY_CONTENT, INQUIRY_REGISTERDATE, 
+			INQUIRY_GROUPNUMBER, INQUIRY_QORA 
+		FROM TBL_INQUIRY 
+		WHERE INQUIRY_GROUPNUMBER = #{inquiryGroupnumber} AND INQUIRY_QORA = 'A'   
+	</select>
+	
+	<insert id="inquiryInsertA" parameterType="inquiry">
+		INSERT INTO TBL_INQUIRY (
+		  INQUIRY_NUMBER, INQUIRY_TITLE, INQUIRY_CONTENT, INQUIRY_REGISTERDATE, 
+		  INQUIRY_GROUPNUMBER, INQUIRY_QORA ) 
 		VALUES (
-		  SEQ_NOTICE.NEXTVAL, #{noticeTitle}, #{noticeContent}, 
-		  SYSDATE, #{noticeBranchname}, #{noticeStatus}, #{adminNumber}  
-		  ) 
+		  SEQ_INQUIRY.NEXTVAL, #{inquiryTitle}, #{inquiryContent}, SYSDATE, 
+		  #{inquiryGroupnumber}, 'A' )  
 	</insert>
 	
-	<update id="noticeUpdate" parameterType="notice">
-		UPDATE TBL_NOTICE 
+	<update id="inquiryUpdateA" parameterType="inquiry">
+		UPDATE TBL_INQUIRY 
 		SET 
-		  NOTICE_TITLE = #{noticeTitle}, NOTICE_CONTENT = #{noticeContent}, 
-		  NOTICE_BRANCHNAME = #{noticeBranchname}, NOTICE_STATUS = #{noticeStatus} 
-		WHERE NOTICE_NUMBER = #{noticeNumber}  
+		  INQUIRY_TITLE = #{inquiryTitle}, INQUIRY_CONTENT = #{inquiryContent} 
+		WHERE INQUIRY_NUMBER = #{inquiryNumber} 
 	</update>
 	
-	<delete id="noticeDelete" parameterType="notice">
-		DELETE FROM TBL_NOTICE 
-		WHERE NOTICE_NUMBER = #{noticeNumber} 
+	<delete id="inquiryDeleteA" parameterType="inquiry">
+		DELETE FROM TBL_INQUIRY 
+		WHERE INQUIRY_NUMBER = #{inquiryNumber}   
 	</delete>
 	
 </mapper>
