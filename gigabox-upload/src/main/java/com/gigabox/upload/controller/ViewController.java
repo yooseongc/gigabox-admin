@@ -77,7 +77,7 @@ public class ViewController {
 				"gigabox" + File.separator + 
 				"movie" + File.separator + 
 				"poster" + File.separator + movieCode + File.separator + 
-				"thumb" + File.separator + "thumb_" + fileName + "." + fileType);
+				fileName + "." + fileType);
 		logger.info("TARGET FILE= " + target.getAbsolutePath());
 		
 		byte[] image = FileUtils.readFileToByteArray(target);
@@ -218,6 +218,75 @@ public class ViewController {
 
 	    logger.info("VIEW CONTROLLER : GET VIDEO FILE END");
 	    logger.info("===========================================================");
+	}
+	
+	
+	@RequestMapping(value="/branch/{branchNumber}/{fileName}.{fileType}", method=RequestMethod.GET)
+	public void showBranchPicture(@PathVariable String branchNumber, 
+			@PathVariable String fileName, @PathVariable String fileType, 
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		logger.info("===========================================================");
+		logger.info("VIEW CONTROLLER : GET IMAGE FILE START");
+		
+		String contextPath = request.getSession().getServletContext().getRealPath("/");
+		logger.info("FILE NAME= " + fileName);
+		logger.info("FILE TYPE= " + fileType);
+		logger.info("CONTEXT PATH= " + contextPath);
+		File target = new File(contextPath + "upload" + File.separator + 
+				"gigabox" + File.separator + 
+				"branch" + File.separator + branchNumber + File.separator + 
+				fileName + "." + fileType);
+		logger.info("TARGET FILE= " + target.getAbsolutePath());
+		
+		byte[] image = FileUtils.readFileToByteArray(target);
+		if (fileType.equalsIgnoreCase("PNG")) {
+			response.setContentType(MediaType.IMAGE_PNG_VALUE);
+		} else if (fileType.equalsIgnoreCase("JPG") || fileType.equalsIgnoreCase("JPEG")) {
+			response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+		} else if (fileType.equalsIgnoreCase("GIF")) {
+			response.setContentType(MediaType.IMAGE_GIF_VALUE);
+		}
+		response.setContentLength(image.length);
+	   
+	    ServletOutputStream responseOutputStream = response.getOutputStream();
+	    responseOutputStream.write(image);
+	    responseOutputStream.flush();
+	    responseOutputStream.close();
+	    
+	    logger.info("VIEW CONTROLLER : GET IMAGE FILE END");
+	    logger.info("===========================================================");
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping(value="/branch/{branchNumber}/pictureName", method=RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> showFileList(@PathVariable String branchNumber,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.info("===========================================================");
+		logger.info("VIEW CONTROLLER : GET FILE LIST START");
+		
+		String contextPath = request.getSession().getServletContext().getRealPath("/");
+		logger.info("branchName= " + branchNumber);
+		logger.info("CONTEXT PATH= " + contextPath);
+		
+		File targetFolder = new File(contextPath + "upload" + File.separator + 
+				"gigabox" + File.separator + "branch" + File.separator + branchNumber);
+		logger.info("TARGET FOLDER= " + targetFolder.getAbsolutePath());
+		logger.info("TARGET FOLDER EXIST? ==> " + targetFolder.isDirectory());
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("rootPath", "/upload/gigabox/branch/" + branchNumber + "/");
+		
+		logger.info("========= FILE IN THIS TARGET FOLDER ==========");
+		String[] fileList = targetFolder.list();
+		for (int i = 0; i < fileList.length; i++) {
+			logger.info("FILE " + (i+1) + "= " + fileList[i]);
+		}
+		logger.info("==============================================");
+		resultMap.put("pictureName", fileList[0]);
+		
+		return new ResponseEntity<Map<String,Object>>(resultMap, HttpStatus.OK);
 	}
 	
 }

@@ -22,7 +22,7 @@
 				SELECT FAQ_NUMBER, FAQ_TITLE, FAQ_CONTENT, FAQ_TYPE  
 				FROM TBL_FAQ 
 				WHERE 1 = 1
-				<if test="searchType == null or searchType == ''">
+				<if test="searchType == null and searchType != null">
 					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
 					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
@@ -75,7 +75,7 @@
 				SELECT FAQ_NUMBER, FAQ_TITLE, FAQ_CONTENT, FAQ_TYPE  
 				FROM TBL_FAQ  
 				WHERE 1 = 1 
-				<if test="searchType == null or searchType == ''">
+				<if test="searchType == null and searchType != null">
 					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
 					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>

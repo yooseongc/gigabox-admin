@@ -29,10 +29,12 @@ public class UploadUtil {
 		if (!thumbDir.exists()) {
 			thumbDir.mkdir();
 		}
+		
 		BufferedImage sourceImg = 
 				ImageIO.read(new File(fileDirPath + File.separator + fileName + "." + fileType));
+		
 		BufferedImage destImg = 
-				Scalr.resize(sourceImg, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_HEIGHT, 100);
+				Scalr.resize(sourceImg, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_HEIGHT, 100);
 		String thumbName = fileDirPath + File.separator + "thumb" + File.separator + "thumb_" + fileName + "." + fileType;
 		File thumbFile = new File(thumbName);
 		

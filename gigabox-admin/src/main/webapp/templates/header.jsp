@@ -22,7 +22,7 @@
                     <a class="navbar-brand" href="#"><button type="button" class="btn btn-success btn-s">
                         사용자 페이지
                     </button></a>
-                    <a class="navbar-brand" href="/admin/logout.do"><button type="button" class="btn btn-success btn-s">
+                    <a class="navbar-brand" href="/admin/auth/logout"><button type="button" class="btn btn-success btn-s">
                         로그아웃
                     </button></a>
                 </li>

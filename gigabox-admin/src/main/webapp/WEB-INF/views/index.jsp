@@ -30,6 +30,23 @@
 <!-- Custom Fonts -->
 <link href="/resources/vendor/font-awesome/css/font-awesome.min.css"
 	rel="stylesheet" type="text/css">
+<!-- jQuery -->
+<script src="/resources/vendor/jquery/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/resources/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Metis Menu Plugin JavaScript -->
+<script src="/resources/vendor/metisMenu/metisMenu.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/resources/dist/js/sb-admin-2.js"></script>
+<!-- Calendar -->
+<script type="text/javascript" src='/resources/calendar/js/sweetalert.min.js?ver=1'></script>
+<link rel="stylesheet" type="text/css" href='/resources/css/sweetalert.css?ver=1.2'>
+<script type="text/javascript" src="/resources/calendar/js/stringBuffer.js"></script>
+<script type="text/javascript" src="/resources/calendar/js/calendar.js"></script>
+<script type="text/javascript" src="/resources/calendar/js/calendarSchdule.js"></script>
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -38,6 +55,24 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+<style type="text/css">
+thead {
+	text-align: center;
+}
+
+thead td {
+	width: 100px;
+}
+
+#tbody td {
+	height: 150px;
+}
+
+#yearMonth {
+	font: bold;
+	font-size: 18px;
+}
+</style>
 </head>
 
 <body>
@@ -61,211 +96,45 @@
 
 
 				<div class="row">
-					<section id="admin_main_boardwrap">
-
-						<div class="col-lg-12">
-							<section id="admin_main_notice">
-								<div class="panel panel-default">
-									<div class="panel-heading">
-										<i class="fa fa-info-circle fa-fw"></i> 공지사항
-										<div class="pull-right">
-											<div class="btn-group">
-												<button type="button" class="btn btn-default btn-sm">
-													더보기</button>
-											</div>
+					<div class="col-lg-12">
+						<table class="table table-bordered">
+							<thead id='thead'>
+								<tr>
+									<td colspan="7">
+										<button type='button' class='btn btn-sm btn-warning'
+											id='moveFastPre' onclick="moveFastMonthPre()">&laquo;</button>
+										&nbsp;
+										<button type='button' class='btn btn-sm btn-warning' id='movePre'
+											onclick="moveMonthPre()">&lsaquo;</button> &nbsp;&nbsp; <span
+										id='yearMonth'></span> &nbsp;&nbsp;
+										<button type='button' class='btn btn-sm btn-warning' id='moveNext'
+											onclick="moveMonthNext()">&rsaquo;</button> &nbsp;
+										<button type='button' class='btn btn-sm btn-warning'
+											id='moveFastNext' onclick="moveFastMonthNext()">&raquo;</button>
+										<div style="text-align: right;">
+											<span>${title}</span> <input class='btn btn-sm btn-info'
+												type="button" value="주" onclick='tabWeek()' /> <input
+												class='btn btn-sm btn-info' type="button" value="월"
+												onclick='tabMonth()' /><!--  <input class='btn btn-sm btn-info'
+												type="button" value="목록" onclick='location.href="/coding"' /> -->
 										</div>
-									</div>
-									<!-- /.panel-heading -->
-									<div class="panel-body">
-										<table width="100%"
-											class="table table-striped table-bordered table-hover"
-											id="dataTables-example1">
-											<thead>
-												<tr>
-													<th class="center">글번호</th>
-													<th class="center">지점</th>
-													<th class="center">제목</th>
-													<th class="center">등록일</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr class="odd gradeX">
-													<td class="center">56</td>
-													<td class="center">전체</td>
-													<td>Win 95+</td>
-													<td class="center">17/05/30</td>
-												</tr>
-												<tr class="even gradeC">
-													<td class="center">55</td>
-													<td class="center">서울 왕십리점</td>
-													<td class="center">Win 95+</td>
-													<td class="center">17/05/30</td>
-												</tr>
-												<tr class="odd gradeA">
-													<td class="center">54</td>
-													<td class="center">서울 강남점</td>
-													<td>Win 95+</td>
-													<td class="center">17/05/30</td>
-												</tr>
-												<tr class="even gradeA">
-													<td class="center">53</td>
-													<td class="center">부산 서면점</td>
-													<td>Win 98+</td>
-													<td class="center">17/05/30</td>
-												</tr>
-												<tr class="odd gradeA">
-													<td class="center">52</td>
-													<td class="center">전체</td>
-													<td>Win XP SP2+</td>
-													<td class="center">17/05/30</td>
-												</tr>
-											</tbody>
-										</table>
-										<!-- /.table-responsive -->
-									</div>
-									<!-- /.panel-body -->
-								</div>
-								<!-- /.panel -->
-							</section>
-						</div>
-						<!-- /.col-lg-12 -->
+									</td>
+								</tr>
+								<tr>
+									<td>일<span class='week'></span></td>
+									<td>월<span class='week'></span></td>
+									<td>화<span class='week'></span></td>
+									<td>수<span class='week'></span></td>
+									<td>목<span class='week'></span></td>
+									<td>금<span class='week'></span></td>
+									<td>토<span class='week'></span></td>
+								</tr>
+							</thead>
+							<tbody id='tbody'></tbody>
+						</table>
 
-						<div class="col-lg-12">
-							<section id="admin_main_qna">
-								<div class="panel panel-default">
-									<div class="panel-heading">
-										<i class="fa fa-question-circle fa-fw"></i> 문의 게시판
-										<div class="pull-right">
-											<div class="btn-group">
-												<button type="button" class="btn btn-default btn-sm">
-													더보기</button>
-											</div>
-										</div>
-									</div>
-									<!-- /.panel-heading -->
-									<div class="panel-body">
-										<table width="100%"
-											class="table table-striped table-bordered table-hover"
-											id="dataTables-example2">
-											<thead>
-												<tr>
-													<th class="center">글번호</th>
-													<th class="center">제목</th>
-													<th class="center">작성자</th>
-													<th class="center">등록일</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr class="odd gradeX">
-													<td class="center">56</td>
-													<td>Win 95+</td>
-													<td class="center">김진환</td>
-													<td class="center">17/05/30</td>
-												</tr>
-												<tr class="even gradeC">
-													<td class="center">55</td>
-													<td class="center">Win 95+</td>
-													<td class="center">김진환</td>
-													<td class="center">17/05/30</td>
-												</tr>
-												<tr class="odd gradeA">
-													<td class="center">54</td>
-													<td>Win 95+</td>
-													<td class="center">김진환</td>
-													<td class="center">17/05/30</td>
-												</tr>
-												<tr class="even gradeA">
-													<td class="center">53</td>
-													<td>Win 98+</td>
-													<td class="center">김진환</td>
-													<td class="center">17/05/30</td>
-												</tr>
-												<tr class="odd gradeA">
-													<td class="center">52</td>
-													<td>Win XP SP2+</td>
-													<td class="center">김진환</td>
-													<td class="center">17/05/30</td>
-												</tr>
-											</tbody>
-										</table>
-										<!-- /.table-responsive -->
-									</div>
-									<!-- /.panel-body -->
-								</div>
-								<!-- /.panel -->
-							</section>
-						</div>
-						<!-- /.col-lg-12 -->
-					</section>
-				</div>
-				<!-- /.row -->
-
-
-				<div class="row">
-					<section id="admin_main_daystat">
-
-						<div class="col-lg-6">
-							<section id="admin_main_dayjoin">
-								<div class="panel panel-default">
-									<div class="panel-heading">
-										<i class="fa fa-bar-chart-o fa-fw"></i> 회원 통계
-										<div class="pull-right">
-											<div class="btn-group">
-												<button type="button"
-													class="btn btn-default btn-xs dropdown-toggle"
-													data-toggle="dropdown">
-													종류 <span class="caret"></span>
-												</button>
-												<ul class="dropdown-menu pull-right" role="menu">
-													<li><a href="#">일 방문자</a></li>
-													<li><a href="#">일 회원가입</a></li>
-												</ul>
-											</div>
-										</div>
-									</div>
-									<!-- /.panel-heading -->
-									<div class="panel-body">
-										<div id="morris-area-chart"></div>
-									</div>
-									<!-- /.panel-body -->
-								</div>
-								<!-- /.panel -->
-							</section>
-						</div>
-						<!-- /.col-lg-6 -->
-
-						<div class="col-lg-6">
-							<section id="admin_main_dayresv">
-								<div class="panel panel-default">
-									<div class="panel-heading">
-										<i class="fa fa-bar-chart-o fa-fw"></i> 예매 통계
-										<div class="pull-right">
-											<div class="btn-group">
-												<button type="button"
-													class="btn btn-default btn-xs dropdown-toggle"
-													data-toggle="dropdown">
-													종류 <span class="caret"></span>
-												</button>
-												<ul class="dropdown-menu pull-right" role="menu">
-													<li><a href="#">전체</a></li>
-													<li><a href="#">서울 왕십리점</a></li>
-												</ul>
-											</div>
-										</div>
-									</div>
-									<!-- /.panel-heading -->
-									<div class="panel-body">
-										<div class="flot-chart">
-											<div class="flot-chart-content" id="flot-bar-chart"></div>
-										</div>
-									</div>
-									<!-- /.panel-body -->
-								</div>
-								<!-- /.panel -->
-							</section>
-						</div>
-						<!-- /.col-lg-6 -->
-					</section>
+					</div>
+					<!-- /.col-lg-12 -->
 				</div>
 				<!-- /.row -->
 
@@ -275,53 +144,100 @@
 	</div>
 	<!-- /#admin_main_wrapper -->
 
+
+
+	<!-- 일정 생성 modal -->
+	<div class="modal fade" id="schduleForm" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">일정등록</h4>
+				</div>
+				<div class="modal-body">
+					<form class='form-margin40' role='form' action="#" method='post'
+						id='frmSchdule'>
+						<div class='form-group'>
+							<label>제목</label> <input type='text' class='form-control'
+								id='summary' name='summary'
+								placeholder="예: 오후 7시에 멕시코 음식점에서 저녁식사">
+							<input type="hidden" id="chk" value="0" />
+							<input type="hidden" id="calendarId" name="calendarId" value="${calendarId}">
+						</div>
+						<div class='form-group'>
+							<label>시작시간</label> <input class='form-control' type="time"
+								id='startTime' name='startTime'>
+						</div>
+						<div class='form-group'>
+							<label>시작날짜</label> <input class='form-control startDate'
+								type="date" id='startDate' name='startDate' readonly="readonly">
+						</div>
+						<div class='form-group'>
+							<label>종료시간</label> <input class='form-control' type="time"
+								id='endTime' name='endTime'>
+						</div>
+						<div class='form-group'>
+							<label>종료날짜</label> <input class='form-control startDate'
+								type="date" id='endDate' name='endDate'>
+						</div>
+						<div class='form-group'>
+							<label>내용</label>
+							<textarea rows="7" class='form-control' id="description"
+								name='description'></textarea>
+						</div>
+						<div class='modal-footer'>
+							<input type="button" class='btn btn-sm btn-warning' value="확인"
+								onclick="calendarSchduleAdd()" /> <input type="reset"
+								class='btn btn-sm btn-warning' value="초기화" /> <input
+								type='button' class='btn btn-sm btn-warning'
+								data-dismiss='modal' value="취소" />
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 일정 수정 modal -->
+	<div class="modal fade" id="schduleFormModify" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">일정수정</h4>
+				</div>
+				<div class="modal-body">
+					<form class='form-margin40' role='form' action="#" method='post'
+						id='frmSchduleModify'>
+						<div class='form-group'>
+							<label>제목</label> <input type='text' class='form-control'
+								id='modifySummary' name='summary'>
+						</div>
+						<div class='form-group'>
+							<label>내용</label>
+							<textarea rows="7" class='form-control' id="modifyDescription"
+								name='description'></textarea>
+						</div>
+						<input type="hidden" id="modifyEventId" name="eventId" /> <input
+							type="hidden" name="calendarId" value="${calendarId}" />
+						<div class='modal-footer'>
+							<input type="button" class='btn btn-sm btn-warning' value="확인"
+								onclick="modifyEvent()" /> <input type="reset"
+								class='btn btn-sm btn-warning' value="초기화" /> <input
+								type='button' class='btn btn-sm btn-warning'
+								data-dismiss='modal' value="취소" />
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
 	<c:import url="/templates/footer.jsp" />
 
-	<!-- jQuery -->
-	<script src="/resources/vendor/jquery/jquery.min.js"></script>
 
-	<!-- Bootstrap Core JavaScript -->
-	<script src="/resources/vendor/bootstrap/js/bootstrap.min.js"></script>
-
-	<!-- Metis Menu Plugin JavaScript -->
-	<script src="/resources/vendor/metisMenu/metisMenu.min.js"></script>
-
-	<!-- Morris Charts JavaScript -->
-	<script src="/resources/vendor/raphael/raphael.min.js"></script>
-	<script src="/resources/vendor/morrisjs/morris.min.js"></script>
-	<script src="/resources/data/morris-data.js"></script>
-
-	<!-- Custom Theme JavaScript -->
-	<script src="/resources/dist/js/sb-admin-2.js"></script>
-
-	<!-- Flot Charts JavaScript -->
-	<script src="/resources/vendor/flot/excanvas.min.js"></script>
-	<script src="/resources/vendor/flot/jquery.flot.js"></script>
-	<script src="/resources/vendor/flot/jquery.flot.pie.js"></script>
-	<script src="/resources/vendor/flot/jquery.flot.resize.js"></script>
-	<script src="/resources/vendor/flot/jquery.flot.time.js"></script>
-	<script src="/resources/vendor/flot-tooltip/jquery.flot.tooltip.min.js"></script>
-	<script src="/resources/data/flot-data.js"></script>
-
-
-	<!-- DataTables JavaScript -->
-	<script src="/resources/vendor/datatables/js/jquery.dataTables.min.js"></script>
-	<script
-		src="/resources/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-	<script
-		src="/resources/vendor/datatables-responsive/dataTables.responsive.js"></script>
-
-	<!-- Page-Level Demo Scripts - Tables - Use for reference -->
-	<script>
-		$(document).ready(function() {
-			$('#dataTables-example1').DataTable({
-				responsive : true
-			});
-			$('#dataTables-example2').DataTable({
-				responsive : true
-			});
-		});
-	</script>
 
 </body>
 

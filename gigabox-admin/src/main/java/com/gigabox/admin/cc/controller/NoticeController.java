@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.gigabox.admin.cc.service.NoticeService;
 import com.gigabox.admin.cc.vo.NoticeSearchCriteria;
 import com.gigabox.admin.cc.vo.NoticeVO;
-import com.gigabox.admin.cinema.persistence.BranchDAO;
+import com.gigabox.admin.cinema.service.BranchService;
 import com.gigabox.admin.cinema.vo.BranchVO;
 import com.gigabox.admin.common.PageMaker;
 
@@ -33,7 +33,7 @@ public class NoticeController {
 	private NoticeService noticeService;
 	
 	@Inject
-	private BranchDAO branchDAO;
+	private BranchService branchService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(NoticeController.class);
 	
@@ -147,7 +147,7 @@ public class NoticeController {
 	public ResponseEntity<List<BranchVO>> noticeBranchnameList() {
 		logger.info("=======================================================");
 		logger.info("NOTICE BRANCHNAME LIST DATA REQUESTED");
-		List<BranchVO> selectedList = branchDAO.branchListAll();
+		List<BranchVO> selectedList = branchService.branchListAll();
 		logger.info("BRANCHNAME LIST= " + selectedList.toString());
 		ResponseEntity<List<BranchVO>> selectedVOList = new ResponseEntity<>(selectedList, HttpStatus.OK);
 		

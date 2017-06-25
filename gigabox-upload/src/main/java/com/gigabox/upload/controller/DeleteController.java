@@ -144,6 +144,47 @@ public class DeleteController {
 		logger.info("===========================================================");
 		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value="/branch/{branchNumber}/delete", method=RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> deleteBranchPictureFile( @PathVariable String branchNumber,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		logger.info("===========================================================");
+		logger.info("DELETE CONTROLLER : DELETE BRANCH PICTURE FILE START");
+		
+		String contextPath = request.getSession().getServletContext().getRealPath("/");
+		logger.info("branchNumber= " + branchNumber);
+		logger.info("CONTEXT PATH= " + contextPath);
+		
+		File targetFolder = new File(contextPath + "upload" + File.separator + 
+				"gigabox" + File.separator + "branch" + File.separator + branchNumber);
+		logger.info("TARGET FOLDER= " + targetFolder.getAbsolutePath());
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		if (!targetFolder.exists()) {
+			logger.info("TARGET FOLDER EXIST? ==> " + targetFolder.exists());
+			resultMap.put("errorMessage", "TARGET FOLDER IS NOT EXISTS");
+			resultMap.put("message", "FAIL");
+			return new ResponseEntity<Map<String,Object>>(resultMap, HttpStatus.BAD_REQUEST);
+		}
+		
+		try {
+			deleteDirectory(targetFolder);
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("errorMessage", e.getMessage());
+			resultMap.put("message", "FAIL");
+			return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		resultMap.put("message", "SUCCESS");
+		resultMap.put("fileDir", contextPath + "upload" + File.separator + "gigabox" + File.separator + "movie"
+				+ File.separator + branchNumber + File.separator);
+		logger.info("DELETE CONTROLLER : DELETE FILE END");
+		logger.info("===========================================================");
+		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+	}
 
 	private static boolean deleteDirectory(File dir) throws Exception {
 		if (!dir.exists()) {

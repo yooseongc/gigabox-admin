@@ -16,4 +16,88 @@
 		FROM TBL_BRANCH 
 	</select>
 	
+	<select id="branchList" resultType="branch" resultMap="branchResultMap">
+		SELECT * 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+				SELECT BRANCH_NUMBER, BRANCH_NAME, BRANCH_ADDRESS, BRANCH_PICTURE 
+				FROM TBL_BRANCH 
+				WHERE 1 = 1
+				<if test="branchLocation == null or branchLocation == '전체'">
+					 
+				</if>
+				<if test="branchLocation != null and branchLocation != '전체'">
+					AND SUBSTR(BRANCH_NAME, 1, INSTR(BRANCH_NAME, ' ') - 1) = #{branchLocation} 
+				</if>
+				<if test="branchLocationName == null or branchLocationName == '전체'">
+					 
+				</if>
+				<if test="branchLocationName != null and branchLocationName != '전체'">
+					AND BRANCH_NAME = #{branchLocationName} 
+				</if>
+				
+				ORDER BY BRANCH_NAME ASC   
+			) LIST 
+		) 
+		<where>
+			RNUM BETWEEN #{pageStart} AND #{pageEnd} 
+		</where> 
+	</select>
+	
+	<select id="branchListCount" resultType="int">
+		SELECT NVL(COUNT(1), 0) 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+				SELECT BRANCH_NUMBER, BRANCH_NAME, BRANCH_ADDRESS, BRANCH_PICTURE 
+				FROM TBL_BRANCH 
+				WHERE 1 = 1
+				<if test="branchLocation == null or branchLocation == '전체'">
+					 
+				</if>
+				<if test="branchLocation != null and branchLocation != '전체'">
+					AND SUBSTR(BRANCH_NAME, 1, INSTR(BRANCH_NAME, ' ') - 1) = #{branchLocation} 
+				</if>
+				<if test="branchLocationName == null or branchLocationName == '전체'">
+					 
+				</if>
+				<if test="branchLocationName != null and branchLocationName != '전체'">
+					AND BRANCH_NAME = #{branchLocationName}  
+				</if>
+				
+				ORDER BY BRANCH_NAME ASC   
+			) LIST 
+		) 
+	</select>
+	
+	<select id="branchDetail" parameterType="branch" resultType="branch" resultMap="branchResultMap">
+		SELECT * 
+		FROM TBL_BRANCH 
+		WHERE BRANCH_NUMBER = #{branchNumber} 
+	</select>
+	
+	<insert id="branchInsert" parameterType="branch">
+		<selectKey keyProperty="branchNumber" resultType="int" order="BEFORE">
+			SELECT SEQ_BRANCH.NEXTVAL FROM DUAL 
+		</selectKey>
+		INSERT INTO TBL_BRANCH (
+		  BRANCH_NUMBER, BRANCH_NAME, BRANCH_ADDRESS, BRANCH_PICTURE ) 
+		VALUES (
+		  #{branchNumber}, #{branchName}, #{branchAddress}, #{branchPicture} 
+		  ) 
+	</insert>
+	
+	<update id="branchUpdate" parameterType="branch">
+		UPDATE TBL_BRANCH 
+		SET 
+		  BRANCH_NAME = #{branchName}, BRANCH_ADDRESS = #{branchAddress}, 
+		  BRANCH_PICTURE = #{branchPicture} 
+		WHERE BRANCH_NUMBER = #{branchNumber}  
+	</update>
+	
 </mapper>

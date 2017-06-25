@@ -1,13 +1,13 @@
-package com.gigabox.admin.cinema.persistence;
+package com.gigabox.admin.cinema.service;
 
 import java.util.List;
 
 import com.gigabox.admin.cinema.vo.BranchSearchCriteria;
 import com.gigabox.admin.cinema.vo.BranchVO;
 
-public interface BranchDAO {
+public interface BranchService {
 
-	public List<BranchVO> branchListAll();
+public List<BranchVO> branchListAll();
 	
 	public List<BranchVO> branchList(BranchSearchCriteria bsc);
 	

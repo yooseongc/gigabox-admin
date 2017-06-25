@@ -25,6 +25,138 @@ public class UploadController {
 
 	private final static Logger logger = LoggerFactory.getLogger(UploadController.class);
 	
+	@RequestMapping(value="/branch/picture", method=RequestMethod.POST)
+	public ResponseEntity<UploadMessageDTO> uploadBranchPicture(UploadFileDTO dto, MultipartHttpServletRequest request) {
+		
+		logger.info("===================================================");
+		logger.info("UPLOAD BRANCH PICTURE FILE START");
+		
+		logger.info("REQUEST AJAX DATA= " + dto.toString());
+		logger.info("CONTEXT PATH= " + request.getServletContext().getRealPath("/"));
+		String contextPath = request.getServletContext().getRealPath("/");
+		String picturePathHome = "upload" + File.separator + "gigabox" + File.separator + "branch" + 
+				File.separator;
+		logger.info("BRANCH PATH= " + picturePathHome);
+		MultipartFile uploadFile = request.getFile(request.getFileNames().next());
+		
+		// 1. "110"번 에러 : 파일 missing
+		if (uploadFile.isEmpty()) {
+			logger.info("ERROR : NO FILE UPLOADED!");
+			UploadMessageDTO mdto = new UploadMessageDTO();
+			mdto.setMessage("REQUEST HAS NO FILE");
+			mdto.setResult(110);
+			logger.info("UPLOAD BRANCH PICTURE FILE END");
+			logger.info("===================================================");
+			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
+		}
+		
+		// 2. 목적 오류
+		if (dto.getPurpose() == null || "".equals(dto.getPurpose())) {
+			logger.info("ERROR : NO PURPOSE!");
+			UploadMessageDTO mdto = new UploadMessageDTO();
+			mdto.setMessage("REQUEST HAS NO PURPOSE");
+			mdto.setResult(100);
+			logger.info("UPLOAD BRANCH PICTURE FILE END");
+			logger.info("===================================================");
+			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
+		} else if (!"picture".equals(dto.getPurpose())) {
+			logger.info("ERROR : IMPROPER PURPOSE! : " + dto.getPurpose());
+			UploadMessageDTO mdto = new UploadMessageDTO();
+			mdto.setMessage("REQUEST HAS IMPROPER PURPOSE");
+			mdto.setResult(100);
+			logger.info("UPLOAD BRANCH PICTURE FILE END");
+			logger.info("===================================================");
+			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
+		}
+		
+		// 3. 파일 타입 오류 (JPG, GIF, PNG만)
+		if (dto.getFileType() == null || "".equals(dto.getFileType())) {
+			logger.info("ERROR : NO FILETYPE!");
+			UploadMessageDTO mdto = new UploadMessageDTO();
+			mdto.setMessage("REQUEST HAS NO FILETYPE");
+			mdto.setResult(60);
+			logger.info("UPLOAD BRANCH PICTURE FILE END");
+			logger.info("===================================================");
+			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
+		} else if (!(dto.getFileType().equalsIgnoreCase("jpg") || 
+				dto.getFileType().equalsIgnoreCase("png") || dto.getFileType().equalsIgnoreCase("gif") 
+				|| dto.getFileType().equalsIgnoreCase("jpeg"))) {
+			logger.info("ERROR : IMPROPER FILETYPE! : " + dto.getFileType());
+			UploadMessageDTO mdto = new UploadMessageDTO();
+			mdto.setMessage("REQUEST HAS IMPROPER FILETYPE");
+			mdto.setResult(60);
+			logger.info("UPLOAD BRANCH PICTURE FILE END");
+			logger.info("===================================================");
+		}
+
+		// 4. 파일 이름 체크
+		if (dto.getFileName() == null || "".equals(dto.getFileName())) {
+			logger.info("ERROR : NO FILENAME!");
+			UploadMessageDTO mdto = new UploadMessageDTO();
+			mdto.setMessage("REQUEST HAS NO FILENAME");
+			mdto.setResult(90);
+			logger.info("UPLOAD BRANCH PICTURE FILE END");
+			logger.info("===================================================");
+			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
+		}
+		
+		// 5. 경로 체크
+		if (dto.getFileDir() == null || "".equals(dto.getFileDir())) {
+			logger.info("ERROR : NO FILEDIR!");
+			UploadMessageDTO mdto = new UploadMessageDTO();
+			mdto.setMessage("REQUEST HAS NO FILEDIR");
+			mdto.setResult(80);
+			logger.info("UPLOAD BRANCH PICTURE FILE END");
+			logger.info("===================================================");
+			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
+		} else if (!(dto.getFileDir().startsWith(picturePathHome))) {
+			logger.info("ERROR : IMPROPER FILEDIR! : " + dto.getFileDir());
+			UploadMessageDTO mdto = new UploadMessageDTO();
+			mdto.setMessage("REQUEST HAS IMPROPER FILEDIR");
+			mdto.setResult(80);
+			logger.info("UPLOAD BRANCH PICTURE FILE END");
+			logger.info("===================================================");
+			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
+		}
+		
+		logger.info("UPLOADING FILE NAME= " + uploadFile.getName());
+		logger.info("UPLOADING FILE TYPE= " + uploadFile.getContentType());
+		logger.info("UPLOADING FILE ORIGINAL NAME= " + uploadFile.getOriginalFilename());
+		logger.info("UPLOADING FILE SIZE= " + uploadFile.getSize());
+		
+		File fileDir = new File(contextPath + dto.getFileDir());
+		if (!fileDir.exists()) {
+			logger.info("MAKE DIRECTORY= " + fileDir.getAbsolutePath());
+			fileDir.mkdir();
+		}
+		String fileDirPath = contextPath + dto.getFileDir();
+		logger.info("FILEDIR PATH= " + fileDirPath);
+		String fileName = dto.getFileName();
+		String fileType = dto.getFileType();
+		
+		try {
+			UploadUtil.fileUpload(uploadFile, fileDirPath, fileName, fileType, false);
+		} catch (IOException e) {
+			e.printStackTrace();
+			UploadMessageDTO mdto = new UploadMessageDTO();
+			mdto.setMessage("ERROR OCCURED IN SERVER SIDE: " + e.getMessage());
+			mdto.setResult(120);
+			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.EXPECTATION_FAILED);
+		}
+		
+		logger.info("UPLOADING BRANCH PICTURE SUCCESSED!");
+		UploadMessageDTO mdto = new UploadMessageDTO();
+		mdto.setFileDir(dto.getFileDir());
+		mdto.setFileName(dto.getFileName());
+		mdto.setFileType(dto.getFileType());
+		mdto.setPurpose(dto.getPurpose());
+		mdto.setMessage("SUCCESSE");
+		mdto.setResult(20);
+		
+		logger.info("UPLOAD BRANCH PICTURE FILE END");
+		logger.info("===================================================");
+		return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.OK);
+	}
 	
 	@RequestMapping(value="/movie/poster", method=RequestMethod.POST)
 	public ResponseEntity<UploadMessageDTO> uploadMoviePoster(UploadFileDTO dto, MultipartHttpServletRequest request) {
@@ -60,7 +192,7 @@ public class UploadController {
 			logger.info("UPLOAD MOVIE POSTER FILE END");
 			logger.info("===================================================");
 			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
-		} else if ("POSTER-UPLOAD".equals(dto.getPurpose())) {
+		} else if (!"POSTER-UPLOAD".equals(dto.getPurpose())) {
 			logger.info("ERROR : IMPROPER PURPOSE! : " + dto.getPurpose());
 			UploadMessageDTO mdto = new UploadMessageDTO();
 			mdto.setMessage("REQUEST HAS IMPROPER PURPOSE");
@@ -196,7 +328,7 @@ public class UploadController {
 			logger.info("UPLOAD MOVIE STEELCUT FILE END");
 			logger.info("===================================================");
 			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
-		} else if ("STEELCUT-UPLOAD".equals(dto.getPurpose())) {
+		} else if (!"STEELCUT-UPLOAD".equals(dto.getPurpose())) {
 			logger.info("ERROR : IMPROPER PURPOSE! : " + dto.getPurpose());
 			UploadMessageDTO mdto = new UploadMessageDTO();
 			mdto.setMessage("REQUEST HAS IMPROPER PURPOSE");
@@ -346,7 +478,7 @@ public class UploadController {
 			logger.info("UPLOAD MOVIE TRAILER FILE END");
 			logger.info("===================================================");
 			return new ResponseEntity<UploadMessageDTO>(mdto, HttpStatus.BAD_REQUEST);
-		} else if ("TRAILER-UPLOAD".equals(dto.getPurpose())) {
+		} else if (!"TRAILER-UPLOAD".equals(dto.getPurpose())) {
 			logger.info("ERROR : IMPROPER PURPOSE! : " + dto.getPurpose());
 			UploadMessageDTO mdto = new UploadMessageDTO();
 			mdto.setMessage("REQUEST HAS IMPROPER PURPOSE");
