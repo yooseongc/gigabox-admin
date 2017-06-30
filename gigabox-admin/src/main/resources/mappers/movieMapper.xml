@@ -35,6 +35,9 @@
 				MOVIE_RELEASEDATE, MOVIE_GENRE, MOVIE_RATING, MOVIE_DIRECTOR, MOVIE_CAST    
 				FROM TBL_MOVIE 
 				WHERE MOVIE_STATUS NOT IN('삭제') 
+				<if test="movieStatus != null and movieStatus != ''">
+					AND MOVIE_STATUS = #{movieStatus}  
+				</if>
 				<if test="searchType == 'all'">
 					AND ( MOVIE_TITLE LIKE '%' || #{searchKeyword} || '%' 
 					OR MOVIE_DIRECTOR LIKE '%' || #{searchKeyword} || '%' 
@@ -92,6 +95,9 @@
 				MOVIE_RELEASEDATE, MOVIE_GENRE, MOVIE_RATING, MOVIE_DIRECTOR, MOVIE_CAST    
 				FROM TBL_MOVIE 
 				WHERE MOVIE_STATUS NOT IN('삭제') 
+				<if test="movieStatus != null and movieStatus != ''">
+					AND MOVIE_STATUS = #{movieStatus}  
+				</if>
 				<if test="searchType == 'all'">
 					AND ( MOVIE_TITLE LIKE '%' || #{searchKeyword} || '%' 
 					OR MOVIE_DIRECTOR LIKE '%' || #{searchKeyword} || '%' 

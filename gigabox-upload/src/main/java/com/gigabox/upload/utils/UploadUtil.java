@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
 
 import org.imgscalr.Scalr;
 import org.springframework.util.FileCopyUtils;

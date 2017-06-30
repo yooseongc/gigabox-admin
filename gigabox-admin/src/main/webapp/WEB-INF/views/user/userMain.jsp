@@ -61,6 +61,18 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 <style type="text/css">
+
+tr:hover td {
+    background-color: #6495ED !important;
+}
+
+td {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .modal-dialog,
 .modal-content {
     /* 80% of window height */

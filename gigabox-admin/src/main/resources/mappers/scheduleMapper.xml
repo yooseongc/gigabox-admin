@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.gigabox.admin.mapper.ScheduleMapper">
+	
+	<resultMap type="schedule" id="scheduleResultMap">
+		<result property="scheduleNumber" column="SCHEDULE_NUMBER" />
+		<result property="scheduleType" column="SCHEDULE_TYPE" />
+		<result property="scheduleStart" column="SCHEDULE_START" />
+		<result property="scheduleEnd" column="SCHEDULE_END" />
+		
+		<result property="movieNumber" column="MOVIE_NUMBER" />
+		<result property="movieTitle" column="MOVIE_TITLE" />
+		<result property="movieType" column="MOVIE_TYPE" />
+		<result property="movieReleasedate" column="MOVIE_RELEASEDATE" />
+		<result property="movieScreentime" column="MOVIE_SCREENTIME" />
+		<result property="movieStatus" column="MOVIE_STATUS" />
+		
+		<result property="movieroomNumber" column="MOVIEROOM_NUMBER" />
+		<result property="movieroomName" column="MOVIEROOM_NAME" />
+		<result property="movieroom2D" column="MOVIEROOM_2D" />
+		<result property="movieroom3D" column="MOVIEROOM_3D" />
+		<result property="movieroom4D" column="MOVIEROOM_4D" />
+		
+		<result property="branchNumber" column="BRANCH_NUMBER" />
+		<result property="branchName" column="BRANCH_NAME" />
+	</resultMap>
+	
+	<select id="scheduleList" resultType="schedule" resultMap="scheduleResultMap">
+		SELECT * 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+		        SELECT SCHEDULE.*, 
+	        		MOVIE.MOVIE_TITLE, MOVIE.MOVIE_TYPE, MOVIE.MOVIE_RELEASEDATE, MOVIE.MOVIE_SCREENTIME, 
+	        		MOVIE.MOVIE_STATUS, 
+	                MOVIEROOM.BRANCH_NUMBER, MOVIEROOM.MOVIEROOM_NAME,  
+	                MOVIEROOM.MOVIEROOM_2D, MOVIEROOM.MOVIEROOM_3D, MOVIEROOM.MOVIEROOM_4D, 
+	                BRANCH.BRANCH_NAME 
+		        FROM TBL_SCHEDULE SCHEDULE 
+		            LEFT JOIN   
+		            (
+		                SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_RELEASEDATE, MOVIE_SCREENTIME, MOVIE_STATUS 
+						        FROM TBL_MOVIE 
+					      )  MOVIE ON SCHEDULE.MOVIE_NUMBER = MOVIE.MOVIE_NUMBER
+		            LEFT JOIN
+		            (
+		                SELECT MOVIEROOM_NUMBER, BRANCH_NUMBER, MOVIEROOM_NAME, MOVIEROOM_2D, MOVIEROOM_3D, MOVIEROOM_4D 
+						        FROM TBL_MOVIEROOM 
+					      )  MOVIEROOM ON SCHEDULE.MOVIEROOM_NUMBER = MOVIEROOM.MOVIEROOM_NUMBER 
+		            LEFT JOIN 
+		            (
+		                SELECT BRANCH_NUMBER, BRANCH_NAME  
+						        FROM TBL_BRANCH 
+					      )  BRANCH ON BRANCH.BRANCH_NUMBER = MOVIEROOM.BRANCH_NUMBER 
+				WHERE MOVIE.MOVIE_STATUS != '삭제'  
+				<if test="branchNumber != 0">
+					AND BRANCH.BRANCH_NUMBER = #{branchNumber} 
+				</if>
+				<if test="movieroomNumber != 0">
+					AND MOVIEROOM.MOVIEROOM_NUMBER = #{movieroomNumber} 
+				</if>
+				<if test="movieStatus != null and movieStatus != '전체'">
+					AND MOVIE.MOVIE_STATUS = #{movieStatus} 
+				</if>
+				<if test="searchType == 't'.toString()">
+					AND MOVIE.MOVIE_TITLE LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'm'.toString()">
+					AND MOVIEROOM.MOVIEROOM_NAME LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="scheduleStart != null">
+					AND TO_DATE(SCHEDULE_START,'YYYY-MM-DD HH24:MI')  
+					  BETWEEN TO_DATE(TRUNC(#{scheduleStart}, 'DD'),'YYYY-MM-DD HH24:MI')  
+					   AND TO_DATE(TRUNC(#{scheduleEnd}, 'DD'),'YYYY-MM-DD HH24:MI')  
+				</if>
+				ORDER BY MOVIEROOM.MOVIEROOM_NAME ASC, SCHEDULE.SCHEDULE_START DESC 
+      		) LIST
+		) 
+		WHERE
+			RNUM BETWEEN #{pageStart} AND #{pageEnd}  
+	</select>
+	
+	<select id="scheduleListCount" resultType="int">
+		SELECT NVL(COUNT(1), 0) 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+		        SELECT SCHEDULE.*, 
+		        	MOVIE.MOVIE_TITLE, MOVIE.MOVIE_TYPE, MOVIE.MOVIE_RELEASEDATE, MOVIE.MOVIE_SCREENTIME, 
+	        		MOVIE.MOVIE_STATUS, 
+	                MOVIEROOM.BRANCH_NUMBER, MOVIEROOM.MOVIEROOM_NAME,  
+	                MOVIEROOM.MOVIEROOM_2D, MOVIEROOM.MOVIEROOM_3D, MOVIEROOM.MOVIEROOM_4D, 
+	                BRANCH.BRANCH_NAME 
+		        FROM TBL_SCHEDULE SCHEDULE 
+		            LEFT JOIN   
+		            (
+		                SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_RELEASEDATE, MOVIE_SCREENTIME, MOVIE_STATUS 
+						        FROM TBL_MOVIE 
+					      )  MOVIE ON SCHEDULE.MOVIE_NUMBER = MOVIE.MOVIE_NUMBER
+		            LEFT JOIN
+		            (
+		                SELECT MOVIEROOM_NUMBER, BRANCH_NUMBER, MOVIEROOM_NAME, MOVIEROOM_2D, MOVIEROOM_3D, MOVIEROOM_4D 
+						        FROM TBL_MOVIEROOM 
+					      )  MOVIEROOM ON SCHEDULE.MOVIEROOM_NUMBER = MOVIEROOM.MOVIEROOM_NUMBER 
+		            LEFT JOIN 
+		            (
+		                SELECT BRANCH_NUMBER, BRANCH_NAME  
+						        FROM TBL_BRANCH 
+					      )  BRANCH ON BRANCH.BRANCH_NUMBER = MOVIEROOM.BRANCH_NUMBER 
+				WHERE MOVIE.MOVIE_STATUS != '삭제'  
+				<if test="branchNumber != 0">
+					AND BRANCH.BRANCH_NUMBER = #{branchNumber} 
+				</if>
+				<if test="movieroomNumber != 0">
+					AND MOVIEROOM.MOVIEROOM_NUMBER = #{movieroomNumber} 
+				</if>
+				<if test="movieStatus != null and movieStatus != '전체'">
+					AND MOVIE.MOVIE_STATUS = #{movieStatus} 
+				</if>
+				<if test="searchType == 't'.toString()">
+					AND MOVIE.MOVIE_TITLE LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="searchType == 'm'.toString()">
+					AND MOVIEROOM.MOVIEROOM_NAME LIKE '%' || #{searchKeyword} || '%' 
+				</if>
+				<if test="scheduleStart != null">
+					AND TO_DATE(SCHEDULE_START,'YYYY-MM-DD HH24:MI')  
+					  BETWEEN TO_DATE(TRUNC(#{scheduleStart}, 'DD'),'YYYY-MM-DD HH24:MI')  
+					   AND TO_DATE(TRUNC(#{scheduleEnd}, 'DD'),'YYYY-MM-DD HH24:MI')  
+				</if>
+				ORDER BY MOVIEROOM.MOVIEROOM_NAME ASC, SCHEDULE.SCHEDULE_START DESC 
+      		) LIST
+		) 
+	</select>
+	
+	<select id="scheduleDetail" parameterType="int" resultType="schedule" resultMap="scheduleResultMap">
+		SELECT * 
+		FROM TBL_SCHEDULE 
+		WHERE SCHEDULE_NUMBER = #{scheduleNumber} 
+	</select>
+	
+	<insert id="scheduleInsert" parameterType="schedule">
+		<selectKey keyProperty="scheduleNumber" resultType="int" order="BEFORE">
+			SELECT SEQ_SCHEDULE.NEXTVAL FROM DUAL 
+		</selectKey>
+		INSERT INTO TBL_SCHEDULE (
+		  SCHEDULE_NUMBER, MOVIE_NUMBER, MOVIEROOM_NUMBER, 
+		  SCHEDULE_TYPE, SCHEDULE_START, SCHEDULE_END ) 
+		VALUES (
+		  #{scheduleNumber}, #{movieNumber}, #{movieroomNumber}, 
+		  #{scheduleType}, #{scheduleStart}, #{scheduleEnd} 
+		  ) 
+	</insert>
+	
+	<update id="scheduleUpdate" parameterType="schedule">
+		UPDATE TBL_SCHEDULE 
+		SET 
+		  SCHEDULE_TYPE = #{scheduleType}, SCHEDULE_START = #{scheduleStart}, 
+		  SCHEDULE_END = #{scheduleEnd}
+		WHERE SCHEDULE_NUMBER = #{scheduleNumber} 
+	</update>
+	
+</mapper>

@@ -38,6 +38,9 @@
 	<logger name="com.gigabox.admin.cc.controller">
 		<level value="info" />
 	</logger>
+	<logger name="com.gigabox.admin.cinema.controller">
+		<level value="info" />
+	</logger>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">

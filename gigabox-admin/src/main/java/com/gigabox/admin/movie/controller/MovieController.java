@@ -85,6 +85,24 @@ public class MovieController {
 		return "/movie/movieMain";
 	}
 	
+	// AJAX로 영화 리스트 보내기
+	@ResponseBody
+	@RequestMapping(value="/movieList", method=RequestMethod.GET)
+	public ResponseEntity<Map<String, Object>> movieListRest() {
+		logger.info("=======================================================");
+		logger.info("MOVIE LIST REQUESTED");
+		MovieSearchCriteria msc = new MovieSearchCriteria();
+		msc.setPerPageNum(200);
+		List<MovieVO> movieList = movieService.movieList(msc);
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("movieList", movieList);
+		ResponseEntity<Map<String, Object>> resultEntity = new ResponseEntity<>(resultMap, HttpStatus.OK);
+		
+		logger.info("MOVIE LIST RESULT SENT TO JSON");
+		logger.info("=======================================================");
+		return resultEntity;
+	}
+	
 	@ResponseBody
 	@RequestMapping(value="/movieDetail/{movieNumber}", method=RequestMethod.PUT)
 	public ResponseEntity<MovieVO> movieDetailRest(@PathVariable("movieNumber") int movieNumber) {

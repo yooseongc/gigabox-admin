@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.gigabox.admin.mapper.MovieroomMapper">
+	
+	<resultMap type="movieroom" id="movieroomResultMap">
+		<result property="movieroomNumber" column="MOVIEROOM_NUMBER" />
+		<result property="branchNumber" column="BRANCH_NUMBER" />
+		<result property="movieroomName" column="MOVIEROOM_NAME" />
+		<result property="movieroom2D" column="MOVIEROOM_2D" />
+		<result property="movieroom3D" column="MOVIEROOM_3D" />
+		<result property="movieroom4D" column="MOVIEROOM_4D" />
+		<result property="movieroomSeatdata" column="MOVIEROOM_SEATDATA" />
+	</resultMap>
+	
+	<select id="movieroomList" parameterType="int" resultType="movieroom" resultMap="movieroomResultMap">
+		SELECT * 
+		FROM TBL_MOVIEROOM 
+		WHERE BRANCH_NUMBER = #{0} 
+		ORDER BY MOVIEROOM_NAME 
+	</select>
+	
+	<select id="movieroomDetail" parameterType="movieroom" resultType="movieroom" resultMap="movieroomResultMap">
+		SELECT * 
+		FROM TBL_MOVIEROOM 
+		WHERE MOVIEROOM_NUMBER = #{movieroomNumber} 
+	</select>
+	
+	<insert id="movieroomInsert" parameterType="movieroom">
+		<selectKey keyProperty="movieroomNumber" resultType="int" order="BEFORE">
+			SELECT SEQ_MOVIEROOM.NEXTVAL FROM DUAL 
+		</selectKey>
+		INSERT INTO TBL_MOVIEROOM (
+		  MOVIEROOM_NUMBER, BRANCH_NUMBER, MOVIEROOM_NAME, 
+		  MOVIEROOM_2D, MOVIEROOM_3D, MOVIEROOM_4D, MOVIEROOM_SEATDATA )  
+		VALUES (
+		  #{movieroomNumber}, #{branchNumber}, #{movieroomName},  
+		  #{movieroom2D}, #{movieroom3D}, #{movieroom4D}, #{movieroomSeatdata}  
+		  ) 
+	</insert>
+	
+	<update id="movieroomUpdate" parameterType="movieroom">
+		UPDATE TBL_MOVIEROOM  
+		SET 
+		  MOVIEROOM_NAME = #{movieroomName}, 
+		  MOVIEROOM_2D = #{movieroom2D}, 
+		  MOVIEROOM_3D = #{movieroom3D}, 
+		  MOVIEROOM_4D = #{movieroom4D}  
+		WHERE MOVIEROOM_NUMBER = #{movieroomNumber}  
+	</update>
+	
+</mapper>

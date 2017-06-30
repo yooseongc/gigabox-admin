@@ -9,6 +9,8 @@
 		<typeAlias type="com.gigabox.admin.movie.vo.MovieVO" alias="movie"/>
 		<typeAlias type="com.gigabox.admin.user.vo.UserVO" alias="user"/>
 		<typeAlias type="com.gigabox.admin.cinema.vo.BranchVO" alias="branch"/>
+		<typeAlias type="com.gigabox.admin.cinema.vo.MovieroomVO" alias="movieroom"/>
+		<typeAlias type="com.gigabox.admin.cinema.vo.ScheduleVO" alias="schedule"/>
 		<typeAlias type="com.gigabox.admin.cc.vo.NoticeVO" alias="notice"/>
 		<typeAlias type="com.gigabox.admin.cc.vo.FaqVO" alias="faq"/>
 		<typeAlias type="com.gigabox.admin.cc.vo.InquiryVO" alias="inquiry"/>

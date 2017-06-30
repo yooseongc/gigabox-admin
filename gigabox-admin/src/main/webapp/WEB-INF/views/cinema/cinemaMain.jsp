@@ -54,7 +54,7 @@
 
 <!-- google map api -->
 <script type="text/javascript" 
-	src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBeynzuOxYNEktxWHuq-satcvafbYmG47o&callback=initMap&sensor=true">
+	src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBeynzuOxYNEktxWHuq-satcvafbYmG47o">
 </script>
 
 <style>
@@ -273,17 +273,40 @@ td {
 			},
 			success: function(data) {
 				branchNames = data;
+				branchLocArr = new Array();
+				branchLocUniq = new Array();
 				for (var i = 0; i < data.length; i++) {
+					// 풀네임
 					var eachFullName = data[i].branchName;
+					
+					// 지역명
 					var branchLocations = eachFullName.split(" ")[0];
+					branchLocArr.push(branchLocations);
+					
+					// 지점명
 					var branchLocationNames = eachFullName.split(" ")[1];
-					$("#branchLocation").append("<option value='" + branchLocations + "'>" + branchLocations + "</option>");
+					
+					// 지점 -> 풀네임
 					if ($("#branchLocation").val() == branchLocations || $("#branchLocation").val() == "전체") {
 						$("#branchLocationName").append("<option value='" + eachFullName + "'>" + eachFullName + "</option>");
 					}
 					
-				}		
+				}	
+				
+				// 지역명 중복 제거
+				$.each(branchLocArr, function(i, el){
+				    if($.inArray(el, branchLocUniq) === -1) {
+				    	branchLocUniq.push(el);
+				    }
+				});
+				
+				for (var i = 0; i < branchLocUniq.length; i++) {
+					$("#branchLocation").append("<option value='" + branchLocUniq[i] + "'>" + branchLocUniq[i] + "</option>");
+				}
+				
 				console.log("지점 이름 불러오기 성공");
+				
+				// 페이지 로딩시 자동선택
 				if ('${param.branchLocation}' != '') {
 					$("#branchLocation option").each(function() {
 						console.log($(this).val());
@@ -356,6 +379,7 @@ td {
                                         <th class="center">지점명</th>
                                         <th class="center">지점 주소</th>
                                         <th class="center">지점 관리</th>
+                                        <th class="center">상영관 관리</th>
                                         <th class="center">상영일정 관리</th>
                                     </tr>
                                 </thead>
@@ -369,6 +393,11 @@ td {
                                         	<button class="btn btn-sm btn-default" 
                                         		data-num="${branchItem.branchNumber}"
 	                                        	onclick="viewBranchDetail(this, event);">지점 관리</button>
+	                                    </td>
+	                                    <td style="text-align: center;">
+	                                    	<button class="btn btn-sm btn-default" 
+                                        		data-num="${branchItem.branchNumber}"
+	                                        	onclick="viewBranchMovieroom(this, event);">상영관 관리</button>
 	                                    </td>
                                         <td style="text-align: center;">
                                         	<button class="btn btn-sm btn-default" 
@@ -655,6 +684,19 @@ td {
 
 	<script>
 	
+	// 지점 상영관 관리 페이지로 이동
+	function viewBranchMovieroom(that, event) {
+		event.preventDefault();
+		var branchNum = $(that).attr("data-num");
+		location.href = "/admin/cinema/"+branchNum+"/movieroom";
+	}
+	
+	// 지점 상영일정 관리 페이지로 이동
+	function viewBranchSchedule(that, event) {
+		event.preventDefault();
+		var branchNum = $(that).attr("data-num");
+		location.href = "/admin/cinema/branch/"+branchNum+"/schedule";
+	}
 	
 	// 숫자 패딩 붙이기
 	function leadingZeros(n, digits) {
@@ -698,7 +740,7 @@ td {
 				
 				$("#branchLocationU").val(branchLocation);
 				$("#branchLocationNameU").val(branchLocationName);
-				
+				$("#branchPictureU").val(data.branchPicture);
 				// 구글 맵
 				initialize(data.branchName, data.branchAddress);
 				
@@ -825,6 +867,7 @@ td {
 			var branchLocation = $("#branchLocationU").val();
 			var branchLocationName = $("#branchLocationNameU").val();
 			var branchNameUpdate = $("#branchNameU");
+			
 			branchNameUpdate.val(branchLocation + " " + branchLocationName);			
 			$.ajax({
 				url: "/admin/cinema/branchUpdate",

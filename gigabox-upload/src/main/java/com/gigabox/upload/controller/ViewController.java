@@ -1,6 +1,8 @@
 package com.gigabox.upload.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
@@ -12,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -28,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ViewController {
 
 	private final static Logger logger = LoggerFactory.getLogger(ViewController.class);
+	
 	
 	@ResponseBody
 	@RequestMapping(value="/movie/{purpose}/{movieCode}/fileList", method=RequestMethod.GET)
@@ -287,6 +293,45 @@ public class ViewController {
 		resultMap.put("pictureName", fileList[0]);
 		
 		return new ResponseEntity<Map<String,Object>>(resultMap, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/movieroom/{movieroomNumber}/seatdata", method=RequestMethod.GET)
+	public ResponseEntity<JSONObject> downloadSeatdata(@PathVariable String movieroomNumber, 
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		logger.info("===========================================================");
+		logger.info("VIEW CONTROLLER : GET SEAT JSON DATA START");
+		
+		String contextPath = request.getSession().getServletContext().getRealPath("/");
+		logger.info("CONTEXT PATH= " + contextPath);
+		File target = new File(contextPath + "upload" + File.separator + 
+				"gigabox" + File.separator + 
+				"movieroom" + File.separator + movieroomNumber + ".txt");
+		logger.info("TARGET FILE= " + target.getAbsolutePath());
+		
+		JSONParser parser = new JSONParser();
+		
+		
+		try {
+	 
+			Object obj = parser.parse(new FileReader(target));
+			JSONObject jsonObject = (JSONObject) obj;
+			logger.info("VIEW CONTROLLER : SEAT JSON DATA END");
+		    logger.info("===========================================================");
+			return new ResponseEntity<JSONObject>(jsonObject, HttpStatus.OK);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		logger.info("ERROR SENDING DATA");
+		logger.info("VIEW CONTROLLER : SEAT JSON DATA END");
+	    logger.info("===========================================================");
+	    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    
 	}
 	
 }

@@ -2,7 +2,6 @@ package com.gigabox.admin.movie.vo;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.util.UriComponents;
@@ -20,6 +19,7 @@ public class MovieSearchCriteria extends Criteria {
 	private String endYear;
 	private List<String> genreList;
 	private List<String> ratingList;
+	private String movieStatus;
 	
 	public void checkYear() {
 		if (startYear == null || "".equals(startYear)) {
@@ -46,6 +46,7 @@ public class MovieSearchCriteria extends Criteria {
 				.queryParam("rating", encoding(rating))
 				.queryParam("startYear", startYear)
 				.queryParam("endYear", endYear)
+				.queryParam("movieStatus", encoding(movieStatus))
 				.build();
 		return uriComponents.toString();
 	}
@@ -102,7 +103,7 @@ public class MovieSearchCriteria extends Criteria {
 	@Override
 	public String toString() {
 		return super.toString() + " MovieSearchCriteria [searchType=" + searchType + ", searchKeyword=" + searchKeyword + ", genre=" + genre
-				+ ", rating=" + rating + ", startYear=" + startYear + ", endYear=" + endYear + "]";
+				+ ", rating=" + rating + ", startYear=" + startYear + ", endYear=" + endYear + ", movieStatus=" + movieStatus + "]";
 	}
 
 	public List<String> getGenreList() {
@@ -119,6 +120,14 @@ public class MovieSearchCriteria extends Criteria {
 
 	public void setRatingList(List<String> ratingList) {
 		this.ratingList = ratingList;
+	}
+
+	public String getMovieStatus() {
+		return movieStatus;
+	}
+
+	public void setMovieStatus(String movieStatus) {
+		this.movieStatus = movieStatus;
 	}
 	
 	

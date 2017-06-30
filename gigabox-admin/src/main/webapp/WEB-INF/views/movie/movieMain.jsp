@@ -40,11 +40,6 @@
 <!-- Custom Theme JavaScript -->
 <script src="/resources/dist/js/sb-admin-2.js"></script>
 
-<!-- DataTables JavaScript -->
-<script src="/resources/vendor/datatables/js/jquery.dataTables.min.js"></script>
-<script	src="/resources/vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-<script src="/resources/vendor/datatables-responsive/dataTables.responsive.js"></script>
-
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
@@ -195,15 +190,28 @@ td {
                                     <div class="form-group input-group" style="width: 500px;">
                                         <select class="form-control" style="width: 100px; height: 35px;" 
                                         	name="searchType" id="searchType">
-                                        <option value="all">전체</option>
-                                        <option value="title">영화제목</option>
-                                        <option value="director">감독</option>
-                                        <option value="cast">출연진</option>
-                                    </select>
-                                    <input type="text" class="form-control" placeholder="영화 제목을 입력해 주세요." style="width: 400px; height: 35px;"
-                                    	name="searchKeyword" id="searchKeyword">
-                                    </div>
-                                </div>
+	                                        <option value="all">전체</option>
+	                                        <option value="title">영화제목</option>
+	                                        <option value="director">감독</option>
+	                                        <option value="cast">출연진</option>
+                                    	</select>
+	                                    <input type="text" class="form-control" placeholder="영화 제목을 입력해 주세요." style="width: 400px; height: 35px;"
+	                                    	name="searchKeyword" id="searchKeyword">
+	                                </div>
+                               	</div>
+                                <div class="list-group-item">
+                                    <span class="pull-left text-muted" style="width: 80px; text-align: center;">영화상태&nbsp;&nbsp;&nbsp;
+                                    </span>
+                                    <div class="form-group">
+                                        <select class="form-control" style="width: 500px;" 
+                                        	name="movieStatus" id="searchStatus">
+	                                        <option value="전체">전체</option>
+	                                        <option value="상영전">상영전</option>
+	                                        <option value="상영중">상영중</option>
+	                                        <option value="상영종료">상영종료</option>
+                                    	</select>
+	                                </div>
+                               	</div>
                                 <div class="list-group-item">
                                     <span class="pull-left text-muted" style="width: 80px; height: 100px; text-align: center;">장르&nbsp;&nbsp;&nbsp;
                                     </span>
@@ -419,6 +427,9 @@ td {
 		if ('${param.endYear}' != '') {
 			$("#endYear").val('${param.endYear}');
 		}
+		if ('${param.movieStatus}' != '') {
+			$("#searchStatus").val('${param.movieStatus}');
+		}
 	
 		$('#all').on("click", function() {
 			if ($(this).prop("checked") == true) {
@@ -440,15 +451,16 @@ td {
 			event.preventDefault();
 			var queryString = "/admin/movie/movieMain"
 				+ '${pageMaker.makeQuery(1)}'
-				+ "&searchType="
-				+ $("#searchType").val()
+				+ "&searchType=" + $("#searchType").val()
 				+ "&searchKeyword=" + $('#searchKeyword').val()
 				+ "&startYear=" + $('#startYear').val()
-				+ "&endYear=" + $("#endYear").val();
+				+ "&endYear=" + $("#endYear").val()
+				+ "&movieStatus=" + $("#searchStatus").val();
 			
 			$("#movieSearchForm input[name=rating]:checked").each(function() {
 				queryString += "&rating=" + $(this).val();
 			});
+			
 			if ($("#all").attr("checked") == true) {
 				
 			} else {
@@ -456,7 +468,7 @@ td {
 					queryString += "&genre=" + $(this).val();
 				});
 			}
-			self.location = queryString;
+			self.location = queryString; 
 		});
 
 	});
@@ -671,6 +683,9 @@ td {
 	               							<option value="3D">3D</option>
 	               							<option value="3D(자막)">3D 자막</option>
 	               							<option value="3D(더빙)">3D 더빙</option>
+	               							<option value="3D">4D</option>
+	               							<option value="4D(자막)">4D 자막</option>
+	               							<option value="4D(더빙)">4D 더빙</option>
 	               						</select>
                						</div>
                 				</div>
@@ -1220,14 +1235,6 @@ td {
 	}
 	
 		$(document).ready(function() {
-			
-			var table = $('#movieListTable').DataTable({
-				"responsive" : true,
-				"paging":   false,
-				"searching": false,
-				"info": false
-			});
-			
 			
 			// 영화 추가 모달
 			$("#movieInsertModalButton").click(function(e) {
