@@ -321,19 +321,19 @@
 						<ul class="pagination">
 
 							<c:if test="${pageMaker.prev}">
-								<li><a href="/admin/cinema/cinemaSchedule${pageMaker.makeQuery(pageMaker.startPage-1)}">&laquo;</a></li>
+								<li><a href="/admin/cinema/branch/${branchInfo.branchNumber}/schedule${pageMaker.makeQuery(pageMaker.startPage-1)}">&laquo;</a></li>
 							</c:if>
 
 							<c:forEach begin="${pageMaker.startPage}"
 								end="${pageMaker.endPage}" var="idx">
 								<li 
 									<c:out value="${pageMaker.criteria.page == idx?'class=\"active\"':''}"/>>
-									<a href="/admin/cinema/cinemaSchedule${pageMaker.makeQuery(idx)}">${idx}</a>
+									<a href="/admin/cinema/branch/${branchInfo.branchNumber}/schedule${pageMaker.makeQuery(idx)}">${idx}</a>
 								</li>
 							</c:forEach>
 
 							<c:if test="${pageMaker.next && pageMaker.endPage > 0}">
-								<li><a href="/admin/cinema/cinemaSchedule${pageMaker.makeQuery(pageMaker.endPage+1)}">&raquo;</a></li>
+								<li><a href="/admin/cinema/branch/${branchInfo.branchNumber}/schedule${pageMaker.makeQuery(pageMaker.endPage+1)}">&raquo;</a></li>
 							</c:if>
 
 						</ul>

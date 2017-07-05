@@ -673,20 +673,7 @@ td {
                 				<label class="col-sm-2 control-label" for="movieType">상영 타입</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-	                					<select class="form-control" id="movieType" name="movieType">
-	               							<option value="필름">필름</option>
-	               							<option value="필름(자막)">필름 자막</option>
-	               							<option value="필름(더빙)">필름 더빙</option>
-	               							<option value="2D">2D</option>
-	               							<option value="2D(자막)">2D 자막</option>
-	               							<option value="2D(더빙)">2D 더빙</option>
-	               							<option value="3D">3D</option>
-	               							<option value="3D(자막)">3D 자막</option>
-	               							<option value="3D(더빙)">3D 더빙</option>
-	               							<option value="3D">4D</option>
-	               							<option value="4D(자막)">4D 자막</option>
-	               							<option value="4D(더빙)">4D 더빙</option>
-	               						</select>
+	                					<input class="form-control" id="movieType" name="movieType" type="text">
                						</div>
                 				</div>
                 			</div>
@@ -895,17 +882,7 @@ td {
                 				<label class="col-sm-2 control-label" for="movieTypeU">상영 타입</label>
                 				<div class="col-sm-10">
                 					<div class="input-group col-sm-12">
-	                					<select class="form-control" id="movieTypeU" name="movieType">
-	               							<option value="필름">필름</option>
-	               							<option value="필름(자막)">필름 자막</option>
-	               							<option value="필름(더빙)">필름 더빙</option>
-	               							<option value="2D">2D</option>
-	               							<option value="2D(자막)">2D 자막</option>
-	               							<option value="2D(더빙)">2D 더빙</option>
-	               							<option value="3D">3D</option>
-	               							<option value="3D(자막)">3D 자막</option>
-	               							<option value="3D(더빙)">3D 더빙</option>
-	               						</select>
+	                					<input class="form-control" id="movieTypeU" name="movieType" type="text">
                						</div>
                 				</div>
                 			</div>
@@ -1943,7 +1920,7 @@ td {
 		        formData: {
 		        	fileName: $("#movieCode").val(),
 		        	fileDir: "upload/gigabox/movie/poster/" + $("#movieCode").val(),
-		        	purpose: "poster",
+		        	purpose: "POSTER-UPLOAD",
 		        	fileType: fileTypeStr
 		        },
 		        done: function (e, data) {
@@ -1977,7 +1954,7 @@ td {
 		        formData: {
 		        	fileName: $("#movieCode").val(),
 		        	fileDir: "upload/gigabox/movie/steelcut/" + $("#movieCode").val(),
-		        	purpose: "steelcut",
+		        	purpose: "STEELCUT-UPLOAD",
 		        	fileType: fileTypeStr
 		        },
 		        done: function (e, data) {
@@ -2011,7 +1988,7 @@ td {
 		        formData: {
 		        	fileName: $("#movieCode").val(),
 		        	fileDir: "upload/gigabox/movie/trailer/" + $("#movieCode").val(),
-		        	purpose: "trailer",
+		        	purpose: "TRAILER-UPLOAD",
 		        	fileType: fileTypeStr
 		        },
 		        done: function (e, data) {
@@ -2020,6 +1997,110 @@ td {
 		            var dataSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/trailer/" + $("#movieCode").val() + "/" + result.fileName + "." + result.fileType;
 		            var deleteSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/poster/" + $("#movieCode").val() + "/" + result.fileName + "." + result.fileType + "/delete";
 		            $("#uploadedTrailerFile").append(
+	                        $('<tr/>')
+	                        .append($('<td/>').text(result.fileName + "." + result.fileType))
+	                        .append($('<td/>').text(result.fileType))
+	                        .append($('<td/>').html("<button class='btn btn-sm btn-warning' onclick='openVideoModal(this)' data-src='"+dataSrc+"'>보기</button>"))
+	                		.append($('<td/>').html("<button class='btn btn-sm btn-danger' onclick='deleteUploadedFile(this)' data-src='"+dataSrc+"'>삭제</button>"))        
+		            	);
+		        },
+		 
+		        progress: function (e, data) {
+		            var progress = parseInt(data.loaded / data.total * 100, 10);
+		            $('#progress .bar').css(
+		                'width',
+		                progress + '%'
+		            );
+		        }
+		    });
+		});
+		// 포스터 업로드 수정
+		$("#posterUploadU").on("change", function() {
+			var fileTypeStr = $("#posterUploadU").val().split(".")[1];
+			
+			$('#posterUploadU').fileupload({
+		        dataType: 'json', 
+		        replaceFileInput: false,
+		        formData: {
+		        	fileName: $("#movieCodeU").val(),
+		        	fileDir: "upload/gigabox/movie/poster/" + $("#movieCodeU").val(),
+		        	purpose: "POSTER-UPLOAD",
+		        	fileType: fileTypeStr
+		        },
+		        done: function (e, data) {
+		            $("#uploadedPosterFileU tr:has(td)").remove();
+		            alert("업로드 처리 되었습니다.");
+		            var result = data.result;
+		            var dataSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/poster/" + $("#movieCodeU").val() + "/" + result.fileName + "." + result.fileType
+	                var dataName = result.fileName + "." + result.fileType;
+		            var deleteSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/poster/" + $("#movieCodeU").val() + "/" + result.fileName + "." + result.fileType + "/delete";
+		            $("#uploadedPosterFileU").append(
+	                        $('<tr/>')
+	                        .append($('<td/>').text(result.fileName + "." + result.fileType))
+	                        .append($('<td/>').text(result.fileType))
+	                        .append($('<td/>').text(result.thumb))
+	                        .append($('<td/>').html("<button class='btn btn-sm btn-warning' onclick='openImageModal(this)' data-src='"+dataSrc+"' data-name='"+dataName+"'>보기</button>"))
+	                        .append($('<td/>').html("<button class='btn btn-sm btn-danger' onclick='deleteUploadedFile(this)' data-src='"+dataSrc+"'>삭제</button>"))
+	                        );
+	                
+		        }
+		    });
+		});
+		
+		// 스틸컷 수정
+		$("#steelcutUploadU").on("change", function() {
+			var fileTypeStr = $("#steelcutUploadU").val().split(".")[1];
+			var prevRow = $("#uploadedSteelcutFileU tr").length;
+			var fileNumStr = "-" + leadingZeros(prevRow + 1, 3);
+			$('#steelcutUploadU').fileupload({
+		        dataType: 'json', 
+		        replaceFileInput: false,
+		        formData: {
+		        	fileName: $("#movieCodeU").val(),
+		        	fileDir: "upload/gigabox/movie/steelcut/" + $("#movieCodeU").val(),
+		        	purpose: "STEELCUT-UPLOAD",
+		        	fileType: fileTypeStr
+		        },
+		        done: function (e, data) {
+		        	alert("업로드 처리 되었습니다.");
+		            var result = data.result;
+		            var dataSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/steelcut/" + $("#movieCodeU").val() + "/" + result.fileName + "." + result.fileType;
+	                var dataName = result.fileName + "." + result.fileType;
+	                var deleteSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/steelcut/" + $("#movieCodeU").val() + "/" + result.fileName + "." + result.fileType + "/delete";
+		            $("#uploadedSteelcutFileU").append(
+	                        $('<tr/>')
+	                        .append($('<td/>').text(result.fileName + "." + result.fileType))
+	                        .append($('<td/>').text(result.fileType))
+	                        .append($('<td/>').text(result.thumb))
+	                        .append($('<td/>').html("<button class='btn btn-sm btn-warning' onclick='openImageModal(this)' data-src='"+dataSrc+"' data-name='"+dataName+"'>보기</button>"))
+	                        .append($('<td/>').html("<button class='btn btn-sm btn-danger' onclick='deleteUploadedFile(this)' data-src='"+dataSrc+"'>삭제</button>"))
+	                        );
+	             	
+		        }
+		    });
+		});
+		
+		// 트레일러
+		$("#trailerUploadU").on("change", function() {
+			var fileTypeStr = $("#trailerUploadU").val().split(".")[1];
+			var prevRow = $("#uploadedTrailerFileU tr").length;
+			var fileNumStr = + "-" + leadingZeros(prevRow + 1, 3);
+			
+			$('#trailerUploadU').fileupload({
+		        dataType: 'json', 
+		        replaceFileInput: false,
+		        formData: {
+		        	fileName: $("#movieCodeU").val(),
+		        	fileDir: "upload/gigabox/movie/trailer/" + $("#movieCodeU").val(),
+		        	purpose: "TRAILER-UPLOAD",
+		        	fileType: fileTypeStr
+		        },
+		        done: function (e, data) {
+		        	alert("업로드 처리 되었습니다.");
+		            var result = data.result;
+		            var dataSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/trailer/" + $("#movieCodeU").val() + "/" + result.fileName + "." + result.fileType;
+		            var deleteSrc = "http://choiys3574.cafe24.com/upload/gigabox/movie/poster/" + $("#movieCodeU").val() + "/" + result.fileName + "." + result.fileType + "/delete";
+		            $("#uploadedTrailerFileU").append(
 	                        $('<tr/>')
 	                        .append($('<td/>').text(result.fileName + "." + result.fileType))
 	                        .append($('<td/>').text(result.fileType))

@@ -130,6 +130,7 @@ public class MovieController {
 		logger.info("MovieVO= " + movieVO.toString());
 		Map<String, String> resultMap = new HashMap<String, String>();
 		int result = movieService.movieInsert(movieVO);
+		
 		if (result == 0) {
 			logger.info("MOVIE INSERTION FAILED");
 			logger.info("=======================================================");

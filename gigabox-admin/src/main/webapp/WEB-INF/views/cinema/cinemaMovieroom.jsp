@@ -293,7 +293,7 @@ span.seatCharts-legendDescription {
                 <div class="modal-body">
                 	<div class="col-lg-12">
                 		<form class="form-horizontal" id="movieroomInsertForm">
-                			<input type="hidden" id="movieroomNumberI" name="movieroomName">
+                			<input type="hidden" id="movieroomNumberI" name="movieroomNumber">
                 			<div class="form-group">
                 				<label class="col-sm-2 control-label" for="movieroomNameI">상영관 이름</label>
                 				<div class="col-sm-10">
@@ -439,7 +439,7 @@ span.seatCharts-legendDescription {
 				classes : 'prime', //your custom CSS class
 				category: 'Prime Zone'
 			},					
-			p: {
+			d: {
 				price   : dzPrice,
 				classes : 'dis', //your custom CSS class
 				category: '장애인석'
@@ -512,9 +512,7 @@ span.seatCharts-legendDescription {
 			szPrice = $("#standardZonePrice").val();
 			pzPrice = $("#primeZonePrice").val();
 			dzPrice = $("#disabledZonePrice").val();
-			console.log("szPrice: " + szPrice);
-			console.log("pzPrice: " + pzPrice);
-			console.log("dzPrice: " + dzPrice);
+
 			
 			seats = {
 					s: {
@@ -527,7 +525,7 @@ span.seatCharts-legendDescription {
 						classes : 'prime', //your custom CSS class
 						category: 'Prime Zone  '
 					},					
-					p: {
+					d: {
 						price   : dzPrice,
 						classes : 'dis', //your custom CSS class
 						category: '장애인석  '
@@ -710,6 +708,7 @@ span.seatCharts-legendDescription {
 		event.preventDefault();
 		// movieroomNumber
 		var dataNum = $(that).attr("data-num");
+		$("#movieroomNumber")
 		$.ajax({
 			url: "/admin/cinema/movieroomDetail/" + dataNum,
 			type: "PUT",
@@ -753,6 +752,7 @@ span.seatCharts-legendDescription {
 		event.preventDefault();
 		// movieroomNumber
 		var dataNum = $(that).attr("data-num");
+		$("#seatDataModalMovieroomNumber").val(dataNum);
 		$("#movieroomName").text($(that).parents("tr[data-id="+dataNum+"]").find("td:eq(0)").text());
 		$.ajax({
 				url: "http://choiys3574.cafe24.com/upload/gigabox/movieroom/" + dataNum + "/seatdata",
@@ -800,12 +800,7 @@ span.seatCharts-legendDescription {
 	  return zero + n;
 	}
 	
-	// 지점 상세보기
-	function viewBranchDetail(that, e) {
-		e.preventDefault();
-		console.log(that);
-		
-	}
+	
 	
 	$(document).ready(function() {
 		
@@ -851,13 +846,12 @@ span.seatCharts-legendDescription {
 		$("#seatDataUpdateButton").click(function(e) {
 			e.preventDefault();
 			var jsonObj = JSON.stringify({map: map, seats: seats});
-			
 			$.ajax({
 				url: "http://choiys3574.cafe24.com/upload/gigabox/movieroom/seatdata",
 				type: "POST",
 				data: {
 					fileName: $("#seatDataModalMovieroomNumber").val(),
-		        	fileDir: "upload/gigabox/movieroom/" + $("#movieroomNumberI").val(),
+		        	fileDir: "upload/gigabox/movieroom/",
 		        	purpose: "seatdata",
 		        	fileType: "txt",
 		        	jsonStr: jsonObj

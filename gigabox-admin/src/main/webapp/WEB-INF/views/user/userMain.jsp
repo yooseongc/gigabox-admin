@@ -390,7 +390,7 @@ td {
                 						<select class="form-control" id="userStatus" name="userStatus" disabled="disabled">
                 							<option value="정상가입">정상가입</option>
                 							<option value="가입대기">가입대기</option>
-                							<option value="회원탈퇴">회원탈퇴</option>
+                							<option value="탈퇴회원">회원탈퇴</option>
                 							<option value="블라인드">블라인드</option>
                 						</select>
                 					</div>
@@ -516,7 +516,7 @@ td {
                 						<select class="form-control" id="userStatusU" name="userStatus">
                 							<option value="정상가입">정상가입</option>
                 							<option value="가입대기">가입대기</option>
-                							<option value="회원탈퇴">회원탈퇴</option>
+                							<option value="탈퇴회원">회원탈퇴</option>
                 							<option value="블라인드">블라인드</option>
                 						</select>
                 					</div>
@@ -664,7 +664,7 @@ td {
 						$("#userStatus option:eq(0)").attr("selected", true);
 					} else if (status == '가입대기') {
 						$("#userStatus option:eq(1)").attr("selected", true);
-					} else if (status == '회원탈퇴') {
+					} else if (status == '탈퇴회원') {
 						$("#userStatus option:eq(2)").attr("selected", true);
 					} else if (status == '블라인드') {
 						$("#userStatus option:eq(3)").attr("selected", true);
@@ -701,7 +701,7 @@ td {
 						$("#userStatusU option:eq(0)").attr("selected", true);
 					} else if (status == '가입대기') {
 						$("#userStatusU option:eq(1)").attr("selected", true);
-					} else if (status == '회원탈퇴') {
+					} else if (status == '탈퇴회원') {
 						$("#userStatusU option:eq(2)").attr("selected", true);
 					} else if (status == '블라인드') {
 						$("#userStatusU option:eq(3)").attr("selected", true);
@@ -750,9 +750,10 @@ td {
 				},
 				success: function(data) {
 					alert(data.result);
+					self.location.reload(true);
 				}
 			});
-			self.location.reload(true);
+			
 		});
 		
 		// 이메일 전송 모달 띄우기

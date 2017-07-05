@@ -14,6 +14,11 @@
 		<typeAlias type="com.gigabox.admin.cc.vo.NoticeVO" alias="notice"/>
 		<typeAlias type="com.gigabox.admin.cc.vo.FaqVO" alias="faq"/>
 		<typeAlias type="com.gigabox.admin.cc.vo.InquiryVO" alias="inquiry"/>
+		<typeAlias type="com.gigabox.admin.reservation.vo.ReservationVO" alias="reservation"/>
+		
+		<typeAlias type="com.gigabox.admin.stat.vo.UserStatVO" alias="userStat" />
+		<typeAlias type="com.gigabox.admin.stat.vo.BranchStatVO" alias="branchStat" />
+		<typeAlias type="com.gigabox.admin.stat.vo.MovieStatVO" alias="movieStat" />
 	</typeAliases>
 	
 </configuration>

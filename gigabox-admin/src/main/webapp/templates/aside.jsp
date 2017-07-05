@@ -41,13 +41,13 @@
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> 통계<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="memberstat.html">회원 통계</a>
+                                    <a href="/admin/stat/userStat">회원 통계</a>
                                 </li>
                                 <li>
-                                    <a href="reservationstat.html">예매 통계</a>
+                                    <a href="/admin/stat/resvStat">예매 통계</a>
                                 </li>
                                 <li>
-                                    <a href="salesstat.html">매출 통계</a>
+                                    <a href="/admin/stat/salesStat">매출 통계</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

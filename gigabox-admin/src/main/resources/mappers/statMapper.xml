@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.gigabox.admin.mapper.StatMapper">
+	
+	<!-- USER STATISTICS PART -->
+	<resultMap type="userStat" id="userStatResultMap">
+		<result property="time" column="TIME" />
+		<result property="gender" column="GENDER" />
+		<result property="count" column="COUNT" />
+		<result property="age" column="AGE" />
+	</resultMap>
+	
+	<!-- 지정한 연, 월 가입자의 성별 수 -->
+	<select id="getUserGenderCountStat" resultType="userStat" resultMap="userStatResultMap">
+		SELECT USER_GENDER AS GENDER, NVL(COUNT(USER_ID), 0) AS COUNT  
+		FROM TBL_USER 
+		WHERE USER_STATUS = '정상가입' 
+		GROUP BY USER_GENDER 
+		ORDER BY USER_GENDER DESC 
+	</select>
+	
+	<!-- 지정한 연, 월 별 가입자 수 -->
+	<select id="getUserRegisterCountStat" resultType="userStat" resultMap="userStatResultMap">
+		SELECT TO_CHAR(USER_REGISTERDATE, 'YYYY-MM') AS TIME, NVL(COUNT(USER_ID), 0) AS COUNT  
+		FROM TBL_USER 
+		WHERE USER_STATUS = '정상가입' 
+			AND TO_CHAR(USER_REGISTERDATE, 'YYYY') = #{selectedYear} 
+		<if test="selectedMonth != null and selectedMonth != ''">
+			AND TO_CHAR(USER_REGISTERDATE, 'MM') = #{selectedMonth} 
+		</if>
+		GROUP BY TO_CHAR(USER_REGISTERDATE, 'YYYY-MM') 
+		ORDER BY TO_CHAR(USER_REGISTERDATE, 'YYYY-MM') ASC 
+	</select>  
+	
+	<!-- 나이별 히스토그램 -->
+	<select id="getUserAgeCountStat" resultType="userStat" resultMap="userStatResultMap">
+		<![CDATA[
+		SELECT  
+			
+   			(CASE WHEN MONTHS_BETWEEN(SYSDATE, TO_DATE(USER_BIRTHDAY,'YYYYMMDD')) / 12 < 1 
+        		THEN '1' 
+    			ELSE TO_CHAR(CEIL(MONTHS_BETWEEN(SYSDATE, TO_DATE(USER_BIRTHDAY,'YYYYMMDD')) /12)) 
+    		END) AS AGE, NVL(COUNT(USER_ID), 0) AS COUNT 
+		FROM TBL_USER
+		WHERE USER_STATUS = '정상가입' 
+		GROUP BY 
+			(CASE WHEN MONTHS_BETWEEN(SYSDATE, TO_DATE(USER_BIRTHDAY,'YYYYMMDD')) / 12 < 1 
+        		THEN '1' 
+    			ELSE TO_CHAR(CEIL(MONTHS_BETWEEN(SYSDATE, TO_DATE(USER_BIRTHDAY,'YYYYMMDD')) /12)) 
+   			 END) 
+   		ORDER BY 
+			(CASE WHEN MONTHS_BETWEEN(SYSDATE, TO_DATE(USER_BIRTHDAY,'YYYYMMDD')) / 12 < 1 
+        		THEN '1' 
+    			ELSE TO_CHAR(CEIL(MONTHS_BETWEEN(SYSDATE, TO_DATE(USER_BIRTHDAY,'YYYYMMDD')) /12)) 
+   			 END) ASC 
+   		]]>
+	</select>
+	
+	<sql id="statSql">
+		(
+		SELECT RESERVATION.*,
+        	USER1.USER_ID, USER1.USER_NAME, USER1.USER_MILEAGE,  
+            SCHEDULE.SCHEDULE_TYPE, SCHEDULE.SCHEDULE_START, SCHEDULE.SCHEDULE_END, 
+       		MOVIE.MOVIE_TITLE, 
+            MOVIEROOM.BRANCH_NUMBER, 
+            BRANCH.BRANCH_NAME 
+		FROM TBL_RESERVATION RESERVATION 
+	       	LEFT JOIN   
+	           (
+	               SELECT USER_NUMBER, USER_ID, USER_NAME, USER_MILEAGE  
+				        FROM TBL_USER 
+			      )  USER1 ON RESERVATION.USER_NUMBER = USER1.USER_NUMBER
+	       	LEFT JOIN   
+	           (
+	               SELECT SCHEDULE_NUMBER, MOVIE_NUMBER, MOVIEROOM_NUMBER, SCHEDULE_TYPE, SCHEDULE_START, SCHEDULE_END 
+				        FROM TBL_SCHEDULE 
+			      )  SCHEDULE ON RESERVATION.SCHEDULE_NUMBER = SCHEDULE.SCHEDULE_NUMBER
+	           LEFT JOIN   
+	           (
+	               SELECT MOVIE_NUMBER, MOVIE_TITLE 
+				        FROM TBL_MOVIE 
+			      )  MOVIE ON SCHEDULE.MOVIE_NUMBER = MOVIE.MOVIE_NUMBER
+	           LEFT JOIN
+	           (
+	               SELECT MOVIEROOM_NUMBER, BRANCH_NUMBER
+				        FROM TBL_MOVIEROOM 
+			      )  MOVIEROOM ON SCHEDULE.MOVIEROOM_NUMBER = MOVIEROOM.MOVIEROOM_NUMBER 
+	           LEFT JOIN 
+	           (
+	               SELECT BRANCH_NUMBER, BRANCH_NAME  
+				        FROM TBL_BRANCH 
+			      )  BRANCH ON BRANCH.BRANCH_NUMBER = MOVIEROOM.BRANCH_NUMBER
+		)
+		
+	</sql>
+	
+	<!-- BRANCH STATISTICS PART -->
+	<resultMap type="branchStat" id="branchStatResultMap">
+		<result property="branch" column="BRANCH" />
+		<result property="status" column="STATUS" />
+		<result property="count" column="COUNT" />
+		<result property="time" column="TIME" />
+		<result property="total" column="TOTAL" />
+		<result property="average" column="AVERAGE" />
+	</resultMap>
+	
+	
+	
+	<select id="getBranchResvStatusStat" resultType="branchStat" resultMap="branchStatResultMap">
+		 (
+		 SELECT BRANCH_NAME AS BRANCH, 
+		 CASE WHEN RESERVATION_STATUS = 2 THEN '예매완료' WHEN RESERVATION_STATUS = 3 THEN '예매취소' END AS STATUS, 
+		 NVL(COUNT(RESERVATION_NUMBER), 0) AS COUNT, 
+		 TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') AS TIME 
+		 FROM
+		 <include refid="statSql"/>
+		 WHERE TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY') = #{selectedYear}
+			<if test="selectedMonth != null and selectedMonth != ''"> 
+			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
+			</if>
+			AND RESERVATION_STATUS != 1 
+		 GROUP BY BRANCH_NAME, RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
+		 ) UNION 
+		 (
+		 SELECT '전체' AS BRANCH, 
+		 CASE WHEN RESERVATION_STATUS = 2 THEN '예매완료' WHEN RESERVATION_STATUS = 3 THEN '예매취소' END AS STATUS, 
+		 NVL(COUNT(RESERVATION_NUMBER), 0) AS COUNT, 
+		 TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') AS TIME 
+		 FROM
+		 <include refid="statSql"/>
+		 WHERE TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY') = #{selectedYear}
+		 	<if test="selectedMonth != null and selectedMonth != ''"> 
+			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
+			</if>
+			AND RESERVATION_STATUS != 1 
+		 GROUP BY RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
+		 )
+		 
+	</select>
+
+	<select id="getBranchPaymentStat" resultType="branchStat" resultMap="branchStatResultMap">
+		(
+		 SELECT BRANCH_NAME AS BRANCH, 
+		 CASE WHEN RESERVATION_STATUS = 2 THEN '예매완료' WHEN RESERVATION_STATUS = 3 THEN '예매취소' END AS STATUS, 
+		 NVL(SUM(RESERVATION_PAYAMOUNT - RESERVATION_USINGMILEAGE), 0) AS TOTAL, 
+		 NVL(AVG(RESERVATION_PAYAMOUNT - RESERVATION_USINGMILEAGE), 0) AS AVERAGE, 
+		 TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') AS TIME 
+		 FROM
+		 <include refid="statSql"/>
+		 WHERE TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY') = #{selectedYear}
+			<if test="selectedMonth != null and selectedMonth != ''"> 
+			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
+			</if>
+			AND RESERVATION_STATUS = 2 
+		 GROUP BY BRANCH_NAME, RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
+		) UNION 
+		(
+		 SELECT '전체' AS BRANCH, 
+		 CASE WHEN RESERVATION_STATUS = 2 THEN '예매완료' WHEN RESERVATION_STATUS = 3 THEN '예매취소' END AS STATUS, 
+		 NVL(SUM(RESERVATION_PAYAMOUNT - RESERVATION_USINGMILEAGE), 0) AS TOTAL, 
+		 NVL(AVG(RESERVATION_PAYAMOUNT - RESERVATION_USINGMILEAGE), 0) AS AVERAGE, 
+		 TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') AS TIME 
+		 FROM
+		 <include refid="statSql"/>
+		 WHERE TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY') = #{selectedYear}
+			<if test="selectedMonth != null and selectedMonth != ''"> 
+			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
+			</if>
+			AND RESERVATION_STATUS = 2 
+		 GROUP BY RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
+		)
+	</select>
+	
+	
+	
+	<!-- MOVIE STATISTICS PART -->
+	<resultMap type="movieStat" id="movieStatResultMap">
+		<result property="movie" column="MOVIE" />
+		<result property="count" column="COUNT" />
+		<result property="time" column="TIME" />
+		<result property="total" column="TOTAL" />
+		<result property="average" column="AVERAGE" />
+	</resultMap>
+	
+	<select id="getMovieResvStatusStat" resultType="movieStat" resultMap="movieStatResultMap">
+		 (
+		 SELECT MOVIE_TITLE AS MOVIE, 
+		 CASE WHEN RESERVATION_STATUS = 2 THEN '예매완료' WHEN RESERVATION_STATUS = 3 THEN '예매취소' END AS STATUS, 
+		 NVL(COUNT(RESERVATION_NUMBER), 0) AS COUNT, 
+		 TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') AS TIME 
+		 FROM
+		 <include refid="statSql"/>
+		 WHERE TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY') = #{selectedYear}
+			<if test="selectedMonth != null and selectedMonth != ''"> 
+			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
+			</if>
+			AND RESERVATION_STATUS != 1 
+		 GROUP BY MOVIE_TITLE, RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
+		 ) UNION 
+		 (
+		 SELECT '전체' AS MOVIE, 
+		 CASE WHEN RESERVATION_STATUS = 2 THEN '예매완료' WHEN RESERVATION_STATUS = 3 THEN '예매취소' END AS STATUS, 
+		 NVL(COUNT(RESERVATION_NUMBER), 0) AS COUNT, 
+		 TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') AS TIME 
+		 FROM
+		 <include refid="statSql"/>
+		 WHERE TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY') = #{selectedYear}
+			<if test="selectedMonth != null and selectedMonth != ''"> 
+			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
+			</if>
+			AND RESERVATION_STATUS != 1 
+		 GROUP BY RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
+		 )
+		 
+	</select>
+
+	<select id="getMoviePaymentStat" resultType="movieStat" resultMap="movieStatResultMap">
+		(
+		 SELECT MOVIE_TITLE AS MOVIE, 
+		 CASE WHEN RESERVATION_STATUS = 2 THEN '예매완료' WHEN RESERVATION_STATUS = 3 THEN '예매취소' END AS STATUS, 
+		 NVL(SUM(RESERVATION_PAYAMOUNT - RESERVATION_USINGMILEAGE), 0) AS TOTAL, 
+		 NVL(AVG(RESERVATION_PAYAMOUNT - RESERVATION_USINGMILEAGE), 0) AS AVERAGE, 
+		 TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') AS TIME 
+		 FROM
+		 <include refid="statSql"/>
+		 WHERE TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY') = #{selectedYear}
+			<if test="selectedMonth != null and selectedMonth != ''"> 
+			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
+			</if>
+			AND RESERVATION_STATUS = 2 
+		 GROUP BY MOVIE_TITLE, RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
+		) UNION 
+		(
+		 SELECT '전체' AS MOVIE, 
+		 CASE WHEN RESERVATION_STATUS = 2 THEN '예매완료' WHEN RESERVATION_STATUS = 3 THEN '예매취소' END AS STATUS, 
+		 NVL(SUM(RESERVATION_PAYAMOUNT - RESERVATION_USINGMILEAGE), 0) AS TOTAL, 
+		 NVL(AVG(RESERVATION_PAYAMOUNT - RESERVATION_USINGMILEAGE), 0) AS AVERAGE, 
+		 TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') AS TIME 
+		 FROM
+		 <include refid="statSql"/>
+		 WHERE TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY') = #{selectedYear}
+			<if test="selectedMonth != null and selectedMonth != ''"> 
+			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
+			</if>
+			AND RESERVATION_STATUS = 2 
+		 GROUP BY RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
+		)
+	</select>
+	
+	
+</mapper>

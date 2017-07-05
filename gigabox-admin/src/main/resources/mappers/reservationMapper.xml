@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.gigabox.admin.mapper.ReservationMapper">
+	
+	<resultMap type="reservation" id="reservationResultMap">
+		
+		<result property="reservationNumber" column="RESERVATION_NUMBER" />
+		<result property="reservationRegisterdate" column="RESERVATION_REGISTERDATE" />
+		<result property="reservationStatus" column="RESERVATION_STATUS" />
+		<result property="reservationAdultnum" column="RESERVATION_ADULTNUM" />
+		<result property="reservationYouthnum" column="RESERVATION_YOUTHNUM" />
+		<result property="reservationChildnum" column="RESERVATION_CHILDNUM" />
+		<result property="reservationPreferencenum" column="RESERVATION_PREFERENCENUM" />
+		<result property="reservationUsingmileage" column="RESERVATION_USINGMILEAGE" />
+		<result property="reservationPayamount" column="RESERVATION_PAYAMOUNT" />
+		<result property="reservationPaymethod" column="RESERVATION_PAYMETHOD" />
+		<result property="reservationPaymentdate" column="RESERVATION_PAYMENTDATE" />
+		<result property="reservationSeat1" column="RESERVATION_SEAT1" />
+		<result property="reservationSeat2" column="RESERVATION_SEAT2" />
+		<result property="reservationSeat3" column="RESERVATION_SEAT3" />
+		<result property="reservationSeat4" column="RESERVATION_SEAT4" />
+		<result property="reservationSeat5" column="RESERVATION_SEAT5" />
+		<result property="reservationSeat6" column="RESERVATION_SEAT6" />
+		
+		<result property="userNumber" column="USER_NUMBER" />
+		<result property="userId" column="USER_ID" />
+		<result property="userName" column="USER_NAME" />
+		<result property="userMileage" column="USER_MILEAGE"/>
+	
+		<result property="scheduleNumber" column="SCHEDULE_NUMBER" />
+		<result property="scheduleType" column="SCHEDULE_TYPE" />
+		<result property="scheduleStart" column="SCHEDULE_START" />
+		<result property="scheduleEnd" column="SCHEDULE_END" />
+		
+		<result property="movieNumber" column="MOVIE_NUMBER" />
+		<result property="movieTitle" column="MOVIE_TITLE" />
+		<result property="movieType" column="MOVIE_TYPE" />
+		<result property="movieScreentime" column="MOVIE_SCREENTIME" />
+		<result property="movieRating" column="MOVIE_RATING" />
+		
+		<result property="movieroomNumber" column="MOVIEROOM_NUMBER" />
+		<result property="movieroomName" column="MOVIEROOM_NAME" />
+		
+		<result property="branchNumber" column="BRANCH_NUMBER" />
+		<result property="branchName" column="BRANCH_NAME" />
+	</resultMap>
+	
+	<select id="reservationList" resultType="reservation" resultMap="reservationResultMap">
+		SELECT * 
+		FROM 
+		(
+			SELECT LIST.*, ROWNUM AS RNUM 
+			FROM 
+			(
+		        SELECT RESERVATION.*, 
+		        	USER1.USER_ID, USER1.USER_NAME, USER1.USER_MILEAGE,  
+		            SCHEDULE.SCHEDULE_TYPE, SCHEDULE.SCHEDULE_START, SCHEDULE.SCHEDULE_END, 
+	        		MOVIE.MOVIE_TITLE, MOVIE.MOVIE_TYPE, MOVIE.MOVIE_SCREENTIME, MOVIE.MOVIE_RATING, 
+	                MOVIEROOM.BRANCH_NUMBER, MOVIEROOM.MOVIEROOM_NAME,  
+	                BRANCH.BRANCH_NAME 
+		        FROM TBL_RESERVATION RESERVATION 
+		        	LEFT JOIN   
+		            (
+		                SELECT USER_NUMBER, USER_ID, USER_NAME, USER_MILEAGE  
+						        FROM TBL_USER 
+					      )  USER1 ON RESERVATION.USER_NUMBER = USER1.USER_NUMBER
+		        	LEFT JOIN   
+		            (
+		                SELECT SCHEDULE_NUMBER, MOVIE_NUMBER, MOVIEROOM_NUMBER, SCHEDULE_TYPE, SCHEDULE_START, SCHEDULE_END 
+						        FROM TBL_SCHEDULE 
+					      )  SCHEDULE ON RESERVATION.SCHEDULE_NUMBER = SCHEDULE.SCHEDULE_NUMBER
+		            LEFT JOIN   
+		            (
+		                SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_SCREENTIME, MOVIE_RATING  
+						        FROM TBL_MOVIE 
+					      )  MOVIE ON SCHEDULE.MOVIE_NUMBER = MOVIE.MOVIE_NUMBER
+		            LEFT JOIN
+		            (
+		                SELECT MOVIEROOM_NUMBER, BRANCH_NUMBER, MOVIEROOM_NAME, MOVIEROOM_2D, MOVIEROOM_3D, MOVIEROOM_4D 
+						        FROM TBL_MOVIEROOM 
+					      )  MOVIEROOM ON SCHEDULE.MOVIEROOM_NUMBER = MOVIEROOM.MOVIEROOM_NUMBER 
+		            LEFT JOIN 
+		            (
+		                SELECT BRANCH_NUMBER, BRANCH_NAME  
+						        FROM TBL_BRANCH 
+					      )  BRANCH ON BRANCH.BRANCH_NUMBER = MOVIEROOM.BRANCH_NUMBER 
+				WHERE 1=1 
+				<if test="userNumber != 0">
+					AND USER.USER_NUMBER = #{userNumber} 
+				</if>
+				<if test="branchNumber != 0">
+					AND BRANCH.BRANCH_NUMBER = #{branchNumber} 
+				</if>
+				<if test="movieroomNumber != 0">
+					AND MOVIEROOM.MOVIEROOM_NUMBER = #{movieroomNumber} 
+				</if>
+				<if test="movieNumber != 0">
+					AND MOVIE.MOVIE_NUMBER = #{movieNumber} 
+				</if>
+				<if test="scheduleNumber != 0">
+					AND SCHEDULE.SCHEDULE_NUMBER = #{scheduleNumber} 
+				</if>
+				ORDER BY SCHEDULE.SCHEDULE_START ASC, MOVIE.MOVIE_TITLE ASC 
+      		) LIST
+		) 
+	</select>
+	
+	<select id="reservationDetail" parameterType="reservation" resultType="reservation" resultMap="reservationResultMap">
+		SELECT RESERVATION.*, 
+			USER1.USER_ID, USER1.USER_NAME, USER1.USER_MILEAGE,  
+		    SCHEDULE.SCHEDULE_TYPE, SCHEDULE.SCHEDULE_START, SCHEDULE.SCHEDULE_END, 
+		    SCHEDULE.MOVIE_NUMBER, SCHEDULE.MOVIEROOM_NUMBER, 
+       		MOVIE.MOVIE_TITLE, MOVIE.MOVIE_TYPE, MOVIE.MOVIE_SCREENTIME, MOVIE.MOVIE_RATING, 
+            MOVIEROOM.BRANCH_NUMBER, MOVIEROOM.MOVIEROOM_NAME,  
+            BRANCH.BRANCH_NAME 
+         FROM TBL_RESERVATION RESERVATION 
+        	LEFT JOIN   
+            (
+                SELECT USER_NUMBER, USER_ID, USER_NAME, USER_MILEAGE  
+				        FROM TBL_USER 
+			      )  USER1 ON RESERVATION.USER_NUMBER = USER1.USER_NUMBER
+        	LEFT JOIN   
+            (
+                SELECT SCHEDULE_NUMBER, MOVIE_NUMBER, MOVIEROOM_NUMBER, SCHEDULE_TYPE, SCHEDULE_START, SCHEDULE_END 
+				        FROM TBL_SCHEDULE 
+			      )  SCHEDULE ON RESERVATION.SCHEDULE_NUMBER = SCHEDULE.SCHEDULE_NUMBER
+            LEFT JOIN   
+            (
+                SELECT MOVIE_NUMBER, MOVIE_TITLE, MOVIE_TYPE, MOVIE_SCREENTIME, MOVIE_RATING  
+				        FROM TBL_MOVIE 
+			      )  MOVIE ON SCHEDULE.MOVIE_NUMBER = MOVIE.MOVIE_NUMBER
+            LEFT JOIN
+            (
+                SELECT MOVIEROOM_NUMBER, BRANCH_NUMBER, MOVIEROOM_NAME, MOVIEROOM_2D, MOVIEROOM_3D, MOVIEROOM_4D 
+				        FROM TBL_MOVIEROOM 
+			      )  MOVIEROOM ON SCHEDULE.MOVIEROOM_NUMBER = MOVIEROOM.MOVIEROOM_NUMBER 
+            LEFT JOIN 
+            (
+                SELECT BRANCH_NUMBER, BRANCH_NAME  
+				        FROM TBL_BRANCH 
+			      )  BRANCH ON BRANCH.BRANCH_NUMBER = MOVIEROOM.BRANCH_NUMBER 
+		WHERE RESERVATION_NUMBER = #{reservationNumber}  
+	</select>
+	
+	<insert id="reservationSeatInsert" parameterType="reservation">
+		INSERT INTO TBL_RESERVATION ( RESERVATION_NUMBER, SCHEDULE_NUMBER, USER_NUMBER, 
+				RESERVATION_REGISTERDATE, RESERVATION_STATUS, 
+				RESERVATION_ADULTNUM, RESERVATION_YOUTHNUM, RESERVATION_CHILDNUM, RESERVATION_PREFERENCENUM, 
+				RESERVATION_USINGMILEAGE, RESERVATION_PAYAMOUNT, RESERVATION_PAYMETHOD, RESERVATION_PAYMENTDATE, 
+				RESERVATION_SEAT1, RESERVATION_SEAT2, RESERVATION_SEAT3, 
+				RESERVATION_SEAT4, RESERVATION_SEAT5, RESERVATION_SEAT6, 
+				RESERVATION_CODE 
+			) 
+		VALUES ( SEQ_RESERVATION.NEXTVAL, #{scheduleNumber}, #{userNumber}, 
+				SYSDATE, 1, 
+				#{reservationAdultnum}, #{reservationYouthnum}, #{reservationChildnum}, #{reservationPreferencenum},  
+				0, 0, '미결제', SYSDATE, 
+				#{reservationSeat1}, #{reservationSeat2}, #{reservationSeat3}, #{reservationSeat4}, 
+				#{reservationSeat5}, #{reservationSeat6}, #{reservationCode}
+			) 
+	</insert>
+	
+	
+	<update id="reservationPaymentUpdate" parameterType="reservation">
+		UPDATE TBL_RESERVATION SET 
+			RESERVATION_USINGMILEAGE = #{reservationUsingmileage}, 
+			RESERVATION_PAYAMOUNT = #{reservationPayamount}, 
+			RESERVATION_PAYMETHOD = #{reservationPaymethod}, 
+			RESERVATION_PAYMENTDATE = SYSDATE 
+		WHERE RESERVATION_NUMBER = #{reservationNumber} 
+	</update>
+	
+	<delete id="reservationDelete" parameterType="reservation">
+		DELETE FROM TBL_RESERVATION WHERE RESERVATION_NUMBER = #{reservationNumber} 
+	</delete>
+	
+</mapper>
