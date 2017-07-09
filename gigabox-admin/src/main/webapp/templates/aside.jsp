@@ -44,10 +44,10 @@
                                     <a href="/admin/stat/userStat">회원 통계</a>
                                 </li>
                                 <li>
-                                    <a href="/admin/stat/resvStat">예매 통계</a>
+                                    <a href="/admin/stat/branchStat">지점별 통계</a>
                                 </li>
                                 <li>
-                                    <a href="/admin/stat/salesStat">매출 통계</a>
+                                    <a href="/admin/stat/movieStat">영화별 통계</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

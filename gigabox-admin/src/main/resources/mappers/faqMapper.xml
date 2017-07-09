@@ -22,37 +22,25 @@
 				SELECT FAQ_NUMBER, FAQ_TITLE, FAQ_CONTENT, FAQ_TYPE  
 				FROM TBL_FAQ 
 				WHERE 1 = 1
-				<if test="searchType == null and searchType != null">
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
-				</if>
-				<if test="searchType == 'mileage'.toString()">
+				<if test="searchType == '마일리지'.toString()">
 					AND FAQ_TYPE = '마일리지' 
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'reservation'.toString()">
+				<if test="searchType == '영화예매'.toString()">
 					AND FAQ_TYPE = '영화예매'   
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'payment'.toString()">
+				<if test="searchType == '결제'.toString()">
 					AND FAQ_TYPE = '결제'    
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'cinema'.toString()">
+				<if test="searchType == '영화관'.toString()">
 					AND FAQ_TYPE = '영화관'  
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'homepage'.toString()">
+				<if test="searchType == '홈페이지'.toString()">
 					AND FAQ_TYPE = '홈페이지'    
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'etc'.toString()">
+				<if test="searchType == '기타'.toString()">
 					AND FAQ_TYPE = '기타'  
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
 					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
 					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
@@ -75,37 +63,25 @@
 				SELECT FAQ_NUMBER, FAQ_TITLE, FAQ_CONTENT, FAQ_TYPE  
 				FROM TBL_FAQ  
 				WHERE 1 = 1 
-				<if test="searchType == null and searchType != null">
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
-				</if>
-				<if test="searchType == 'mileage'.toString()">
+				<if test="searchType == '마일리지'.toString()">
 					AND FAQ_TYPE = '마일리지' 
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'reservation'.toString()">
+				<if test="searchType == '영화예매'.toString()">
 					AND FAQ_TYPE = '영화예매'   
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'payment'.toString()">
+				<if test="searchType == '결제'.toString()">
 					AND FAQ_TYPE = '결제'    
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'cinema'.toString()">
+				<if test="searchType == '영화관'.toString()">
 					AND FAQ_TYPE = '영화관'  
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'homepage'.toString()">
+				<if test="searchType == '홈페이지'.toString()">
 					AND FAQ_TYPE = '홈페이지'    
-					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
-					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>
-				<if test="searchType == 'etc'.toString()">
+				<if test="searchType == '기타'.toString()">
 					AND FAQ_TYPE = '기타'  
+				</if>
+				<if test="searchKeyword != null and searchKeyword != ''">
 					AND ( FAQ_TITLE LIKE '%' || #{searchKeyword} || '%' 
 					OR FAQ_CONTENT LIKE '%' || #{searchKeyword} || '%' ) 
 				</if>

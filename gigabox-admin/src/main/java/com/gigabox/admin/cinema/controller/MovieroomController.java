@@ -82,9 +82,11 @@ public class MovieroomController {
 		logger.info("MovieroomVO= " + movieroomVO.toString());
 		if (movieroomVO.getMovieroom2D() == null) {
 			movieroomVO.setMovieroom2D("N");
-		} else if (movieroomVO.getMovieroom3D() == null) {
+		}
+		if (movieroomVO.getMovieroom3D() == null) {
 			movieroomVO.setMovieroom3D("N");
-		} else if (movieroomVO.getMovieroom4D() == null) {
+		} 
+		if (movieroomVO.getMovieroom4D() == null) {
 			movieroomVO.setMovieroom4D("N");  
 		}
 		
@@ -129,9 +131,11 @@ public class MovieroomController {
 		logger.info("MovieroomVO= " + movieroomVO.toString());
 		if (movieroomVO.getMovieroom2D() == null) {
 			movieroomVO.setMovieroom2D("N");
-		} else if (movieroomVO.getMovieroom3D() == null) {
+		}
+		if (movieroomVO.getMovieroom3D() == null) {
 			movieroomVO.setMovieroom3D("N");
-		} else if (movieroomVO.getMovieroom4D() == null) {
+		}
+		if (movieroomVO.getMovieroom4D() == null) {
 			movieroomVO.setMovieroom4D("N");  
 		}
 		int result = movieroomService.movieroomUpdate(movieroomVO);

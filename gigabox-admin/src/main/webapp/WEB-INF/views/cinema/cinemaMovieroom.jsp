@@ -293,7 +293,7 @@ span.seatCharts-legendDescription {
                 <div class="modal-body">
                 	<div class="col-lg-12">
                 		<form class="form-horizontal" id="movieroomInsertForm">
-                			<input type="hidden" id="movieroomNumberI" name="movieroomNumber">
+                			<!-- <input type="hidden" id="movieroomNumberI" name="movieroomNumber"> -->
                 			<div class="form-group">
                 				<label class="col-sm-2 control-label" for="movieroomNameI">상영관 이름</label>
                 				<div class="col-sm-10">

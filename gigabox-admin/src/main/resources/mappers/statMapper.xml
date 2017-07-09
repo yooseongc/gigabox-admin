@@ -120,7 +120,7 @@
 			<if test="selectedMonth != null and selectedMonth != ''"> 
 			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
 			</if>
-			AND RESERVATION_STATUS != 1 
+			AND RESERVATION_STATUS = 2 
 		 GROUP BY BRANCH_NAME, RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
 		 ) UNION 
 		 (
@@ -134,13 +134,14 @@
 		 	<if test="selectedMonth != null and selectedMonth != ''"> 
 			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
 			</if>
-			AND RESERVATION_STATUS != 1 
+			AND RESERVATION_STATUS = 2 
 		 GROUP BY RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
 		 )
 		 
 	</select>
 
 	<select id="getBranchPaymentStat" resultType="branchStat" resultMap="branchStatResultMap">
+		SELECT * FROM (
 		(
 		 SELECT BRANCH_NAME AS BRANCH, 
 		 CASE WHEN RESERVATION_STATUS = 2 THEN '예매완료' WHEN RESERVATION_STATUS = 3 THEN '예매취소' END AS STATUS, 
@@ -170,7 +171,8 @@
 			</if>
 			AND RESERVATION_STATUS = 2 
 		 GROUP BY RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
-		)
+		)) TEMP
+		ORDER BY TEMP.TIME ASC, TEMP.BRANCH ASC 
 	</select>
 	
 	
@@ -196,7 +198,7 @@
 			<if test="selectedMonth != null and selectedMonth != ''"> 
 			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
 			</if>
-			AND RESERVATION_STATUS != 1 
+			AND RESERVATION_STATUS = 2 
 		 GROUP BY MOVIE_TITLE, RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
 		 ) UNION 
 		 (
@@ -210,7 +212,7 @@
 			<if test="selectedMonth != null and selectedMonth != ''"> 
 			AND TO_CHAR(RESERVATION_REGISTERDATE, 'MM') = #{selectedMonth}
 			</if>
-			AND RESERVATION_STATUS != 1 
+			AND RESERVATION_STATUS = 2 
 		 GROUP BY RESERVATION_STATUS, TO_CHAR(RESERVATION_REGISTERDATE, 'YYYY-MM') 
 		 )
 		 

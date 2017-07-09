@@ -146,6 +146,7 @@
 									<div class="form-group input-group" style="margin: 0 auto;">
 										<form id="faqSearchForm" class="form-horizontal">
 			                                <select id="searchType" name="searchType" class="form-control" style="width: 200px; height: 35px;">
+			                                    <option value="전체">전체</option>
 			                                    <option value="마일리지">마일리지</option>
 			                                    <option value="영화예매">영화예매</option>
 												<option value="결제">결제</option>
